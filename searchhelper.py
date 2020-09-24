@@ -91,6 +91,7 @@ class UrlOpenerRegistry():
     def from_yaml_file(cls, file_name):
         """Read data from a YAML file"""
         try:
+            # pylint: disable=import-outside-toplevel ; degrade gracefully
             import yaml
         except ImportError as import_error:
             raise NotImplementedError(
@@ -164,7 +165,7 @@ class UrlOpenerRegistry():
                                 self.search_urls[category].get(
                                     self.k_regex_description,
                                     '(missing description)'))
-
+                            # pylint: disable=raise-missing-from ; no parent
                             raise ValueError(error_message)
                         #
                     #
