@@ -1,0 +1,79 @@
+#
+# Einstellungsdatei für searchhelper.py, Format YAML
+# Alle Teilbäume in dieser Datei bis auf "Search URLs" sind optional.
+#
+Application Title: Anwendungsname/Fenstertitel
+#
+# Programmbeschreibung. Wird im oberen Teil des Fenster angezeigt
+# und sollte in etwa folgendes enthalten:
+Description: |
+    Dieses Programm kann zur Schnellsuche (...) verwendet werden.
+    Nach Eingabe des Suchbegriffs und Anklicken von "Öffnen" bzw. Drücken von <Return> öffnet sich das jeweilige Suchergebnis in einem neuen Fenster oder Tab des Standardbrowsers.
+#
+# URL-Definitionen.
+Search URLs:
+    Einfache Suchseite:
+        URL: http://example.com/search/simple?query={search_term}
+    Eine achtstellige Zahl mit führenden Nullen erwartende Suchseite:
+        Number Format: '>08d'
+        URL: http://example.com/search/eight-digit-number?query={search_term}
+    Einen Bezeichner aus Großbuchstaben und Ziffern erwartende Seite:
+        Search Term Must Match: '^[A-Z][A-Z0-9_]+$'
+        Regex Description: Großbuchstaben, Ziffern und Unterstriche, beginnend mit einem Buchstaben
+        URL: http://example.com/search/identifier?query={search_term}
+    Kategorie mit mehreren URLs:
+        URLs:
+            Beispiel 1: http://example.com/seach/area-1?query={search_term}
+            Beispiel 2: http://example.com/seach/area-2?query={search_term}
+            Beispiel 3: http://example.com/seach/area-3?query={search_term}
+#
+# Grundsätzlich wird die Homepage durch Weglassen aller Pfadinformationen
+# aus der URL bestimmt. Ausnahmen werden hier definiert.
+# Für URLs aus Kategorien mit mehreren URLs wird der jeweilge Name der URL als Schlüssel verwendet.
+Deviant Homepages:
+    Einen Bezeichner aus Großbuchstaben und Ziffern erwartende Seite: http://example.com/identifier-homepage/
+    Beispiel 2: http://example.com/area-2-homepage/
+#
+# Programmoptionen
+Options:
+    #
+    # Wenn "true", werden Radiobuttons statt Checkboxen angezeigt
+    Mutually Exclusive Categories: false
+    #
+    # Tastenkombinationen zur Auswahl mehrerer Kategorien auf einmal.
+    # Die Tasten werden wie in
+    # <https://tkdocs.com/shipman/event-modifiers.html>
+    # beschrieben benannt, aber ohne "KeyPress" (das wird vom Programm eingefügt).
+    # ACHTUNG:  Diese Option wird unwirksam, wenn "Mutually Exclusive Categories"
+    #           auf true steht, denn bei Radiobuttons ergibt das keinen Sinn.
+    Special Select Keys:
+        Control-Shift-A:
+            Label: Einfache Suche und Bezeichnersuche
+            Categories:
+            - Einfache Suchseite
+            - Einen Bezeichner aus Großbuchstaben und Ziffern erwartende Seite
+#
+# Vorbereitete deutsche Übersetzungen.
+# Bei Änderungen bitte die Platzhalter ({0}, {1}, {2}) beachten!
+Translations:
+    #
+    # Beschriftungen
+    Search Term: Suchbegriff
+    Open Button: Öffnen
+    Quit Button: Beenden
+    #
+    # Dieser Hinweis wird der Beschreibung für jede in der Option
+    # "Special Select Keys" definierte wirkksame Tastenkombination angehängt.
+    Special Key Selects: Die Tastenkombination {0} wählt {1} aus.
+    #
+    # Fehlermeldungen
+    Category Error: Fehler bei Kategorie {0!r}
+    No Regex Match: >
+        Der Suchbegriff {0!r}
+        passt nicht zur Regular Expression {1!r}
+        und wird ignoriert.
+    Regex Error: |
+        Syntaxfehler in der Regular Expression
+        ({0})
+        Bitte den Fehler in der Datei {1}
+        ({2}) korrigieren und dieses Programm neu starten!

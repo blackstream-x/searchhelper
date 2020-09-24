@@ -1,0 +1,78 @@
+#
+# Setting file for searchhelper.py, YAML format
+# All subtrees in this file except "Search URLs" are optional.
+#
+Application Title: Application Title (optional, defaults to 'Search Helper')
+#
+# Program description. It is displayed in the upper half of the window
+# and should contain roughly the following:
+Description: |
+    This program can be used for a quick search (...)
+    After entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.
+#
+# URL definitions.
+Search URLs:
+    Simple search page:
+        URL: http://example.com/search/simple?query={search_term}
+    Single URL expecting an 8-digit number with leading zeros:
+        Number Format: '>08d'
+        URL: http://example.com/search/eight-digit-number?query={search_term}
+    Single URL expecting an uppercase identifier:
+        Search Term Must Match: '^[A-Z][A-Z0-9_]+$'
+        Regex Description: Uppercase letters, digits and undersores, beginning with a letter
+        URL: http://example.com/search/identifier?query={search_term}
+    Category with multiple URLs:
+        URLs:
+            Example 1: http://example.com/seach/area-1?query={search_term}
+            Example 2: http://example.com/seach/area-2?query={search_term}
+            Example 3: http://example.com/seach/area-3?query={search_term}
+#
+# Homepages are generally determined by discarding the whole path of the URL.
+# Exceptions are defined here.
+# Use the single URL name as the key for URLs from multiple-URL categories
+Deviant Homepages:
+    Single URL expecting an uppercase identifier: http://example.com/identifier-homepage/
+    Example 2: http://example.com/area-2-homepage/
+#
+# Program options
+Options:
+    #
+    # Display radiobuttons instead of checkboxes?
+    Mutually Exclusive Categories: false
+    #
+    # Definition of key combinations for selecting multiple categories at once.
+    # Keys are identified as documented at
+    # <https://tkdocs.com/shipman/event-modifiers.html>,
+    # but without "KeyPress" which is inserted by the program.
+    # NOTE: This option is void if 'Mutually Exclusive Categories' is set to true.
+    #       It would not make any sense when radiobuttons are displayed instead of checkboxes.
+    Special Select Keys:
+        Control-Shift-A:
+            Label: Simple and identifier search
+            Categories:
+            - Simple search page
+            - Single URL expecting an uppercase identifier
+#
+# Put translations here if your user interface is not english.
+# When doing changes here, please take care of the placeholders ({0}, {1}, {2})!
+Translations:
+    #
+    # Labels and buttons
+    Search Term: Search Term
+    Open Button: Open
+    Quit Button: Quit
+    #
+    # Description addition for each effectual key combination from
+    # "Special Select Keys"
+    Special Key Selects: The key combination {0} selects {1}.
+    #
+    # Error Messages
+    Category Error: Fehler bei Kategorie {0!r}
+    No Regex Match: >
+        Search term {0!r} does not match the regular expression
+        {1!r} and will be ignored.
+    Regex Error: |
+        Error in regular expression
+        ({0})
+        Please fix the error in the file {1}
+        ({2}) and restart this program!
