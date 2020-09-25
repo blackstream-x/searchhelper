@@ -1,14 +1,22 @@
 #
-# Setting file for searchhelper.py, YAML format
+# Config file for searchhelper.py, YAML format
 # All subtrees in this file except "Search URLs" are optional.
 #
-Application Title: Application Title (optional, defaults to 'Search Helper')
+Application Title: Application name (Window title)
 #
 # Program description. It is displayed in the upper half of the window
 # and should contain roughly the following:
 Description: |
     This program can be used for a quick search (...)
     After entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.
+    The placeholder 'url_count_per_category' (in curly braces) creates a list of categories and count of URLs per category as follows:
+    {url_count_per_category}
+#
+# Metadata for this file
+Metadata:
+    Author: Rainer Schwarzbach
+    Date: 2020-09-25
+    Version: 1.0
 #
 # URL definitions.
 Search URLs:
@@ -60,7 +68,13 @@ Translations:
     # Labels and buttons
     Search Term: Search Term
     Open Button: Open
+    About Button: About…
     Quit Button: Quit
+    Copy URL: Copy URL
+    List URLs: List URLs
+    URLs in Category: URLs in {0!r}
+    Program: PROGRAM
+    Config File: CONFIGURATION FILE
     #
     # Description addition for each effectual key combination from
     # "Special Select Keys"

@@ -26,8 +26,10 @@ from tkinter import messagebox
 # Constants
 #
 
-
-DEFAULT_FILE_NAME = 'example.yaml'
+SCRIPT_NAME = 'Search Helper'
+VERSION = '1.0'
+LICENSE = 'LICENSE.txt'
+DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
 
 
 #
@@ -48,7 +50,7 @@ class UrlOpenerRegistry():
     k_special_keys = 'Special Select Keys'
     k_urls = 'URLs'
 
-    def __init__(self, mapping, source_file=None):
+    def __init__(self, mapping, config_file_name=None):
         """Keep the data structure form the input file"""
         self.search_urls = mapping[self.k_search_urls]
         description = mapping.get('Description', '')
@@ -82,31 +84,37 @@ class UrlOpenerRegistry():
         #
         self.application = dict(
             description=description,
-            title=mapping.get('Application Title', 'Search Helper'))
+            title=mapping.get('Application Title', SCRIPT_NAME),
+            metadata=mapping.get('Metadata', {}),
+            config_file_name=config_file_name)
         self.deviant_homepages = mapping.get('Deviant Homepages', {})
-        self.source_file = source_file
-
 
     @classmethod
-    def from_yaml_file(cls, file_name):
+    def from_yaml_file(cls, config_file_name):
         """Read data from a YAML file"""
         try:
-            # pylint: disable=import-outside-toplevel ; degrade gracefully
+            # If PyYaml is not installed, we can catch the NotImplementedError
+            # and fall back to a JSON file.
             import yaml
         except ImportError as import_error:
             raise NotImplementedError(
                 'No PyYAML modue installed') from import_error
         #
-        with open(file_name, mode='rt', encoding='utf-8') as yaml_file:
+        with open(config_file_name,
+                  mode='rt',
+                  encoding='utf-8') as yaml_file:
             return cls(yaml.safe_load(yaml_file.read()),
-                       source_file=file_name)
+                       config_file_name=config_file_name)
         #
 
     @classmethod
-    def from_json_file(cls, file_name):
+    def from_json_file(cls, config_file_name):
         """Read data from a YAML file"""
-        with open(file_name, mode='rt', encoding='utf-8') as json_file:
-            return cls(json.load(json_file), source_file=file_name)
+        with open(config_file_name,
+                  mode='rt',
+                  encoding='utf-8') as json_file:
+            return cls(json.load(json_file),
+                       config_file_name=config_file_name)
         #
 
     def get_category_search_urls(self, category):
@@ -130,32 +138,33 @@ class UrlOpenerRegistry():
         Else, return the homepages.
         """
         if search_term:
-            try:
-                number_format = self.search_urls[category][self.k_format]
-            except KeyError:
+            number_format = self.search_urls[category].get(self.k_format)
+            if number_format:
+                search_term = format(int(search_term), number_format)
+            else:
+                must_match = self.search_urls[category].get(self.k_must_match)
                 try:
-                    must_match = self.search_urls[category][self.k_must_match]
-                except KeyError:
-                    pass
+                    match = re.match(must_match, search_term)
+                except re.error as regex_error:
+                    error_location = ' \u2192 '.join(
+                        (self.k_search_urls, category, self.k_must_match))
+                    raise ValueError(
+                        self.translations.get(
+                            'Regex Error',
+                            'Error in regular expression\n'
+                            '({0})\n'
+                            'Please fix the error in the file {1}\n'
+                            '({2}) and restart this program!').format(
+                                regex_error,
+                                self.application['config_file_name'],
+                                error_location)) from regex_error
+                except TypeError:
+                    # No regular expression.
+                    ...
                 else:
-                    try:
-                        match = re.match(must_match, search_term)
-                    except re.error as regex_error:
-                        error_location = ' \u2192 '.join(
-                            (self.k_search_urls, category, self.k_must_match))
+                    if not match:
                         raise ValueError(
-                            self.translations.get(
-                                'Regex Error',
-                                'Error in regular expression\n'
-                                '({0})\n'
-                                'Please fix the error in the file {1}\n'
-                                '({2}) and restart this program!').format(
-                                    regex_error,
-                                    self.source_file,
-                                    error_location)) from regex_error
-                    else:
-                        if not match:
-                            error_message = '{0}\n[{1}]'.format(
+                            '{0}\n[{1}]'.format(
                                 self.translations.get(
                                     'No Regex Match',
                                     'Search term {0!r} does not match'
@@ -164,14 +173,9 @@ class UrlOpenerRegistry():
                                         search_term, must_match),
                                 self.search_urls[category].get(
                                     self.k_regex_description,
-                                    '(missing description)'))
-                            # pylint: disable=raise-missing-from ; no parent
-                            raise ValueError(error_message)
-                        #
+                                    '(missing description)')))
                     #
                 #
-            else:
-                search_term = format(int(search_term), number_format)
             #
             quoted_search_term = urllib.parse.quote_plus(search_term)
         else:
@@ -197,6 +201,87 @@ class UrlOpenerRegistry():
     def get_count(self, category):
         """Return the count of URLs per category"""
         return len(self.get_items(category))
+
+
+class ModalDialog(tkinter.Toplevel):
+
+    """Adapted from
+    <https://effbot.org/tkinterbook/tkinter-dialog-windows.htm>
+    """
+
+    def __init__(self,
+                 parent,
+                 text=None,
+                 title=None,
+                 cancel_button=False,
+                 minimum_textwidth=None):
+        """Create the toplevel window and wait until the dialog is closed"""
+        super().__init__(parent)
+        self.transient(parent)
+        if title:
+            self.title(title)
+        #
+        self.parent = parent
+        self.result = None
+        body = tkinter.Frame(self)
+        text_area = tkinter.Label(
+            body,
+            text=text,
+            justify=tkinter.LEFT)
+        text_area.grid(sticky=tkinter.W)
+        self.initial_focus = text_area
+        if minimum_textwidth:
+            textwidth_enforcement_widget = tkinter.Label(
+                body,
+                width=minimum_textwidth)
+            textwidth_enforcement_widget.grid(sticky=tkinter.W)
+        #
+        body.grid(padx=5, pady=5, sticky=tkinter.E + tkinter.W)
+        self.create_buttonbox(cancel_button=cancel_button)
+        self.grab_set()
+        if not self.initial_focus:
+            self.initial_focus = self
+        #
+        self.protocol("WM_DELETE_WINDOW", self.action_cancel)
+        self.initial_focus.focus_set()
+        self.wait_window(self)
+
+    def create_buttonbox(self, cancel_button=False):
+        """Add standard button box."""
+        box = tkinter.Frame(self)
+        button = tkinter.Button(
+            box,
+            text="OK",
+            width=10,
+            command=self.action_ok,
+            default=tkinter.ACTIVE)
+        button.grid(padx=5, pady=5, row=0, column=0, sticky=tkinter.W)
+        if cancel_button:
+            button = tkinter.Button(
+                box,
+                text="Cancel",
+                width=10,
+                command=self.action_cancel)
+            button.grid(padx=5, pady=5, row=0, column=1, sticky=tkinter.E)
+        #
+        self.bind("<Return>", self.action_ok)
+        box.grid(sticky=tkinter.E + tkinter.W)
+
+    #
+    # standard button semantics
+
+    def action_ok(self, event=None):
+        """Clean up"""
+        del event
+        self.withdraw()
+        self.update_idletasks()
+        self.action_cancel()
+
+    def action_cancel(self, event=None):
+        """Put focus back to the parent window"""
+        del event
+        self.parent.focus_set()
+        self.destroy()
 
 
 class UserInterface():
@@ -238,7 +323,6 @@ class UserInterface():
         self.main_window.bind_all("<KeyPress-Return>", self.open_urls)
         self.main_window.bind_all("<KeyPress-Escape>", self.quit)
         self.search_term_entry.focus_set()
-        #
         self.main_window.mainloop()
 
     def __build_action_frame(self):
@@ -300,6 +384,45 @@ class UserInterface():
                 column=0,
                 columnspan=2,
                 sticky=tkinter.W)
+            if self.registry.get_count(current_category) > 1:
+                def show_list_handler(self=self, category=current_category):
+                    """Internal function definition to process the category
+                    in the "real" handler function self.show_urls_in(),
+                    compare <https://tkdocs.com/shipman/extra-args.html>.
+                    """
+                    return self.show_urls_in(category)
+                #
+                show_list_button = tkinter.Button(
+                    action_frame,
+                    text=self.registry.translations.get(
+                        'List URLs',
+                        'List URLs'),
+                    # width=10,
+                    command=show_list_handler)
+                show_list_button.grid(
+                    row=current_grid_row,
+                    column=2,
+                    sticky=tkinter.W)
+            else:
+                def copy_url_handler(self=self, category=current_category):
+                    """Internal function definition to process the category
+                    in the "real" handler function self.copy_url(),
+                    compare <https://tkdocs.com/shipman/extra-args.html>.
+                    """
+                    return self.copy_url(category)
+                #
+                show_list_button = tkinter.Button(
+                    action_frame,
+                    text=self.registry.translations.get(
+                        'Copy URL',
+                        'Copy URL'),
+                    # width=10,
+                    command=copy_url_handler)
+                show_list_button.grid(
+                    row=current_grid_row,
+                    column=2,
+                    sticky=tkinter.W)
+            #
             current_grid_row += 1
             if access_key:
                 def handler(event, self=self, category=current_category):
@@ -322,6 +445,17 @@ class UserInterface():
         button.grid(
             row=current_grid_row,
             column=0,
+            sticky=tkinter.W,
+            padx=5,
+            pady=5)
+        button = tkinter.Button(
+            action_frame,
+            text=self.registry.translations.get('About Button', 'About…'),
+            width=10,
+            command=self.show_about)
+        button.grid(
+            row=current_grid_row,
+            column=1,
             sticky=tkinter.W,
             padx=5,
             pady=5)
@@ -369,6 +503,62 @@ class UserInterface():
         for category in self.registry.special_select.get(
                 special_select_key, []):
             self.categories[category].set(1)
+        #
+
+    def show_about(self):
+        """Show information about the application and the source file
+        in a modal dialog
+        """
+        try:
+            with open(
+                    os.path.join(os.path.dirname(sys.argv[0]),
+                                 LICENSE),
+                    mode='rt',
+                    encoding='utf-8') as license_file:
+                license_text = license_file.read()
+        except IOError:
+            license_text = '(License file is missing)'
+        #
+        metadata = '\n'.join(
+            '{0}: {1}'.format(key, value) for (key, value)
+            in self.registry.application['metadata'].items())
+        ModalDialog(
+            self.main_window,
+            title=self.registry.translations.get('About Button', 'About…'),
+            text='{0}\n\n{1} {2}\n\n{3}\n\n'
+            '{4}\n\n{5}\n{6}'.format(
+                self.registry.translations.get('Program',
+                                               'PROGRAM'),
+                SCRIPT_NAME,
+                VERSION,
+                license_text,
+                self.registry.translations.get('Config File',
+                                               'Config File'),
+                self.registry.application['config_file_name'],
+                metadata))
+        #
+
+    def show_urls_in(self, category):
+        """Show all URL names of the selected category in a modal dialog"""
+        url_names = [name for (name, url)
+                     in self.registry.get_items(category)]
+        ModalDialog(
+            self.main_window,
+            title=self.registry.translations.get(
+                'URLs in Category',
+                'URLs in {0!r}').format(category),
+            text='\n'.join(url_names),
+            minimum_textwidth=40)
+        #
+
+    def copy_url(self, category):
+        """Copy the URL from the current text into the clipboard"""
+        search_term = self.search_term_entry.get().strip()
+        urls_list = self.registry.get_list_for(
+            category, search_term=search_term)
+        if len(urls_list) == 1:
+            self.main_window.clipboard_clear()
+            self.main_window.clipboard_append(urls_list[0])
         #
 
     def open_urls(self, event=None):
@@ -423,17 +613,17 @@ class UserInterface():
 def main():
     """Main script function"""
     if len(sys.argv) > 1:
-        source_file_name = sys.argv[1]
+        config_file_name = sys.argv[1]
     else:
-        source_file_name = os.path.join(
+        config_file_name = os.path.join(
             os.path.dirname(sys.argv[0]),
-            DEFAULT_FILE_NAME)
+            DEFAULT_CONFIG_FILE_NAME)
     #
-    file_type = os.path.splitext(source_file_name)[1]
+    file_type = os.path.splitext(config_file_name)[1]
     if file_type in ('.yaml', '.yml'):
-        registry = UrlOpenerRegistry.from_yaml_file(source_file_name)
+        registry = UrlOpenerRegistry.from_yaml_file(config_file_name)
     elif file_type == '.json':
-        registry = UrlOpenerRegistry.from_json_file(source_file_name)
+        registry = UrlOpenerRegistry.from_json_file(config_file_name)
     #
     UserInterface(registry)
 
