@@ -30,6 +30,7 @@ YAML_EXTENSION = '.yaml'
 # Functions
 #
 
+
 def __get_arguments():
     """Parse command line arguments"""
     argument_parser = argparse.ArgumentParser(
@@ -40,7 +41,6 @@ def __get_arguments():
     argument_parser.add_argument('source_file',
                                  help='The file to convert')
     return argument_parser.parse_args()
-
 
 
 def main(arguments):

@@ -8,6 +8,13 @@ Search URLs helper script with Tk GUI,
 idea based on <https://antitext.de/suche.py> by @teh_aSak
 """
 
+# TODO: make ModalDialog an abstract class and inherit from it
+# TODO: allow a (heading, paragraph, (...), (...)) sequence
+#       for the InfoDialog
+# TODO: Catch the ValueError when copying the URL to the clipboard
+#       and infor the user via a messagebox
+# TODO: Register web browsers defined in the yaml file (if the path ist found)
+# TODO: Open URLs of a category in the preferred web browser - if available -
 
 import json
 import os
