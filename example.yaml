@@ -7,7 +7,7 @@ Application Title: Application name (Window title)
 # Program description. It is displayed in the upper half of the window
 # and should contain roughly the following:
 Description: |
-    This program can be used for a quick search (...)
+    This program can be used for a quick search over multiple URLs organized in different categories.
     After entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.
     The placeholder 'url_count_per_category' (in curly braces) creates a list of categories and count of URLs per category as follows:
     {url_count_per_category}
@@ -15,8 +15,8 @@ Description: |
 # Metadata for this file
 Metadata:
     Author: Rainer Schwarzbach
-    Date: 2020-09-25
-    Version: 1.0
+    Date: '2020-09-28'
+    Version: 1.1
 #
 # URL definitions.
 Search URLs:

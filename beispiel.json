@@ -1,0 +1,61 @@
+{
+  "Application Title": "Anwendungsname (Fenstertitel)",
+  "Description": "Dieses Programm kann zur Schnellsuche \u00fcber verschiedene URLs in mehreren Kategorien verwendet werden.\nNach Eingabe des Suchbegriffs und Anklicken von \"\u00d6ffnen\" bzw. Dr\u00fccken von <Return> \u00f6ffnet sich das jeweilige Suchergebnis in einem neuen Fenster oder Tab des Standardbrowsers.\nDer Platzhalter \"url_count_per_category\" (in geschweiften Klammern) erzeugt eine Liste der Kategorien mit Anzahl der URLs wie folgt:\n{url_count_per_category}\n",
+  "Metadata": {
+    "Autor": "Rainer Schwarzbach",
+    "Datum": "2020-09-28",
+    "Version": 1.1
+  },
+  "Search URLs": {
+    "Einfache Suchseite": {
+      "URL": "http://example.com/search/simple?query={search_term}"
+    },
+    "Eine achtstellige Zahl mit f\u00fchrenden Nullen erwartende Suchseite": {
+      "Number Format": ">08d",
+      "URL": "http://example.com/search/eight-digit-number?query={search_term}"
+    },
+    "Einen Bezeichner aus Gro\u00dfbuchstaben und Ziffern erwartende Seite": {
+      "Search Term Must Match": "^[A-Z][A-Z0-9_]+$",
+      "Regex Description": "Gro\u00dfbuchstaben, Ziffern und Unterstriche, beginnend mit einem Buchstaben",
+      "URL": "http://example.com/search/identifier?query={search_term}"
+    },
+    "Kategorie mit mehreren URLs": {
+      "URLs": {
+        "Beispiel 1": "http://example.com/seach/area-1?query={search_term}",
+        "Beispiel 2": "http://example.com/seach/area-2?query={search_term}",
+        "Beispiel 3": "http://example.com/seach/area-3?query={search_term}"
+      }
+    }
+  },
+  "Deviant Homepages": {
+    "Einen Bezeichner aus Gro\u00dfbuchstaben und Ziffern erwartende Seite": "http://example.com/identifier-homepage/",
+    "Beispiel 2": "http://example.com/area-2-homepage/"
+  },
+  "Options": {
+    "Mutually Exclusive Categories": false,
+    "Special Select Keys": {
+      "Control-Shift-A": {
+        "Label": "Einfache Suche und Bezeichnersuche",
+        "Categories": [
+          "Einfache Suchseite",
+          "Einen Bezeichner aus Gro\u00dfbuchstaben und Ziffern erwartende Seite"
+        ]
+      }
+    }
+  },
+  "Translations": {
+    "Search Term": "Suchbegriff",
+    "Open Button": "\u00d6ffnen",
+    "About Button": "\u00dcber\u2026",
+    "Quit Button": "Beenden",
+    "Copy URL": "URL kopieren",
+    "List URLs": "URLs auflisten",
+    "URLs in Category": "URLs in {0!r}",
+    "Program": "PROGRAMM",
+    "Config File": "KONFIGURATIONSDATEI",
+    "Special Key Selects": "Die Tastenkombination {0} w\u00e4hlt {1} aus.",
+    "Category Error": "Fehler bei Kategorie {0!r}",
+    "No Regex Match": "Der Suchbegriff {0!r} passt nicht zur Regular Expression {1!r} und wird ignoriert.\n",
+    "Regex Error": "Syntaxfehler in der Regular Expression\n({0})\nBitte den Fehler in der Datei {1}\n({2}) korrigieren und dieses Programm neu starten!\n"
+  }
+}

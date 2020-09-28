@@ -1,0 +1,61 @@
+{
+  "Application Title": "Application name (Window title)",
+  "Description": "This program can be used for a quick search over multiple URLs organized in different categories.\nAfter entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.\nThe placeholder 'url_count_per_category' (in curly braces) creates a list of categories and count of URLs per category as follows:\n{url_count_per_category}\n",
+  "Metadata": {
+    "Author": "Rainer Schwarzbach",
+    "Date": "2020-09-28",
+    "Version": 1.1
+  },
+  "Search URLs": {
+    "Simple search page": {
+      "URL": "http://example.com/search/simple?query={search_term}"
+    },
+    "Single URL expecting an 8-digit number with leading zeros": {
+      "Number Format": ">08d",
+      "URL": "http://example.com/search/eight-digit-number?query={search_term}"
+    },
+    "Single URL expecting an uppercase identifier": {
+      "Search Term Must Match": "^[A-Z][A-Z0-9_]+$",
+      "Regex Description": "Uppercase letters, digits and undersores, beginning with a letter",
+      "URL": "http://example.com/search/identifier?query={search_term}"
+    },
+    "Category with multiple URLs": {
+      "URLs": {
+        "Example 1": "http://example.com/seach/area-1?query={search_term}",
+        "Example 2": "http://example.com/seach/area-2?query={search_term}",
+        "Example 3": "http://example.com/seach/area-3?query={search_term}"
+      }
+    }
+  },
+  "Deviant Homepages": {
+    "Single URL expecting an uppercase identifier": "http://example.com/identifier-homepage/",
+    "Example 2": "http://example.com/area-2-homepage/"
+  },
+  "Options": {
+    "Mutually Exclusive Categories": false,
+    "Special Select Keys": {
+      "Control-Shift-A": {
+        "Label": "Simple and identifier search",
+        "Categories": [
+          "Simple search page",
+          "Single URL expecting an uppercase identifier"
+        ]
+      }
+    }
+  },
+  "Translations": {
+    "Search Term": "Search Term",
+    "Open Button": "Open",
+    "About Button": "About\u2026",
+    "Quit Button": "Quit",
+    "Copy URL": "Copy URL",
+    "List URLs": "List URLs",
+    "URLs in Category": "URLs in {0!r}",
+    "Program": "PROGRAM",
+    "Config File": "CONFIGURATION FILE",
+    "Special Key Selects": "The key combination {0} selects {1}.",
+    "Category Error": "Fehler bei Kategorie {0!r}",
+    "No Regex Match": "Search term {0!r} does not match the regular expression {1!r} and will be ignored.\n",
+    "Regex Error": "Error in regular expression\n({0})\nPlease fix the error in the file {1}\n({2}) and restart this program!\n"
+  }
+}

@@ -7,7 +7,7 @@ Application Title: Anwendungsname (Fenstertitel)
 # Programmbeschreibung. Wird im oberen Teil des Fenster angezeigt
 # und sollte in etwa folgendes enthalten:
 Description: |
-    Dieses Programm kann zur Schnellsuche (...) verwendet werden.
+    Dieses Programm kann zur Schnellsuche über verschiedene URLs in mehreren Kategorien verwendet werden.
     Nach Eingabe des Suchbegriffs und Anklicken von "Öffnen" bzw. Drücken von <Return> öffnet sich das jeweilige Suchergebnis in einem neuen Fenster oder Tab des Standardbrowsers.
     Der Platzhalter "url_count_per_category" (in geschweiften Klammern) erzeugt eine Liste der Kategorien mit Anzahl der URLs wie folgt:
     {url_count_per_category}
@@ -15,8 +15,8 @@ Description: |
 # Metadaten dieser Datei
 Metadata:
     Autor: Rainer Schwarzbach
-    Datum: 2020-09-25
-    Version: 1.0
+    Datum: '2020-09-28'
+    Version: 1.1
 #
 # URL-Definitionen.
 Search URLs:
