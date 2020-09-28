@@ -1,0 +1,78 @@
+#
+# Config file for searchhelper.py, YAML format
+# All subtrees in this file except "Search URLs" are optional.
+#
+Application Title: Debian Search Helper
+#
+# Program description. It is displayed in the upper half of the window
+# and should contain roughly the following:
+Description: |
+    This program can be used for a quick search on web pages of the Debian project.
+    After entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.
+#
+# Metadata for this file
+Metadata:
+    Author: Rainer Schwarzbach
+    Date: '2020-09-28'
+    Version: 1.0
+#
+# URL definitions.
+Search URLs:
+    Bugs:
+        URL: https://bugs.debian.org/{search_term}
+    Developer information:
+        URL: https://tracker.debian.org/{search_term}
+    Packages:
+        URL: https://packages.debian.org/{search_term}
+#
+# No deviant homepages.
+#
+# Program options
+Options:
+    #
+    # Display radiobuttons instead of checkboxes?
+    Mutually Exclusive Categories: false
+    #
+    # Definition of key combinations for selecting multiple categories at once.
+    # Keys are identified as documented at
+    # <https://tkdocs.com/shipman/event-modifiers.html>,
+    # but without "KeyPress" which is inserted by the program.
+    # NOTE: This option is void if 'Mutually Exclusive Categories' is set to true.
+    #       It would not make any sense when radiobuttons are displayed instead of checkboxes.
+    Special Select Keys:
+        Control-Shift-A:
+            Label: all categories
+            Categories:
+            - Bugs
+            - Developer information
+            - Packages
+#
+# Put translations here if your user interface is not english.
+# When doing changes here, please take care of the placeholders ({0}, {1}, {2})!
+Translations:
+    #
+    # Labels and buttons
+    Search Term: Search Term
+    Open Button: Open
+    About Button: About…
+    Quit Button: Quit
+    Copy URL: Copy URL
+    List URLs: List URLs
+    URLs in Category: URLs in {0!r}
+    Program: PROGRAM
+    Config File: CONFIGURATION FILE
+    #
+    # Description addition for each effectual key combination from
+    # "Special Select Keys"
+    Special Key Selects: The key combination {0} selects {1}.
+    #
+    # Error Messages
+    Category Error: Fehler bei Kategorie {0!r}
+    No Regex Match: >
+        Search term {0!r} does not match the regular expression
+        {1!r} and will be ignored.
+    Regex Error: |
+        Error in regular expression
+        ({0})
+        Please fix the error in the file {1}
+        ({2}) and restart this program!
