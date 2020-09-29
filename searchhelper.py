@@ -554,11 +554,21 @@ class UserInterface():
     def copy_url(self, category):
         """Copy the URL from the current text into the clipboard"""
         search_term = self.search_term_entry.get().strip()
-        urls_list = self.registry.get_list_for(
-            category, search_term=search_term)
-        if len(urls_list) == 1:
-            self.main_window.clipboard_clear()
-            self.main_window.clipboard_append(urls_list[0])
+        try:
+            urls_list = self.registry.get_list_for(
+                category, search_term=search_term)
+        except ValueError as value_error:
+            messagebox.showerror(
+                self.registry.translations.get(
+                    'Category Error',
+                    'Error for category {0!r}').format(category),
+                str(value_error),
+                icon=messagebox.ERROR)
+        else:
+            if len(urls_list) == 1:
+                self.main_window.clipboard_clear()
+                self.main_window.clipboard_append(urls_list[0])
+            #
         #
 
     def open_urls(self, event=None):
