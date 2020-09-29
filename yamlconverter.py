@@ -48,8 +48,14 @@ def main(arguments):
     file_stub, file_extension = os.path.splitext(arguments.source_file)
     if file_extension in (YAML_EXTENSION, '.yml'):
         target_file_extension = JSON_EXTENSION
+        load = yaml.safe_load
+        dump = json.dump
+        dump_arguments = dict(indent=2)
     elif file_extension == JSON_EXTENSION:
         target_file_extension = YAML_EXTENSION
+        load = json.load
+        dump = yaml.dump
+        dump_arguments = dict(default_flow_style=False)
     else:
         raise ValueError(
             'File extension {0!r} not supported'.format(file_extension))
@@ -60,30 +66,15 @@ def main(arguments):
             'Target file {0!r} exists, use -f to overwrite'.format(
                 target_file_name))
     #
-    if target_file_extension == JSON_EXTENSION:
-        # Load YAML, write JSON
-        with open(arguments.source_file,
-                  mode='rt',
-                  encoding='utf-8') as input_file:
-            data = yaml.safe_load(input_file)
-        #
-        with open(target_file_name,
-                  mode='wt',
-                  encoding='utf-8') as output_file:
-            json.dump(data, output_file, indent=2)
-        #
-    elif target_file_extension == YAML_EXTENSION:
-        # Load YAML, write JSON
-        with open(arguments.source_file,
-                  mode='rt',
-                  encoding='utf-8') as input_file:
-            data = json.load(input_file)
-        #
-        with open(target_file_name,
-                  mode='wt',
-                  encoding='utf-8') as output_file:
-            yaml.dump(data, output_file, default_flow_style=False)
-        #
+    with open(arguments.source_file,
+              mode='rt',
+              encoding='utf-8') as input_file:
+        data = load(input_file)
+    #
+    with open(target_file_name,
+              mode='wt',
+              encoding='utf-8') as output_file:
+        dump(data, output_file, **dump_arguments)
     #
     return 0
 
