@@ -320,6 +320,7 @@ class UserInterface():
             self.registry.k_mutex_categories,
             False)
         self.__build_action_frame()
+        self.main_window.bind_all("<Control-KeyPress-x>", self.cut_search_term)
         self.main_window.bind_all("<KeyPress-Return>", self.open_urls)
         self.main_window.bind_all("<KeyPress-Escape>", self.quit)
         self.search_term_entry.focus_set()
@@ -338,12 +339,11 @@ class UserInterface():
         search_term_label = tkinter.Label(
             action_frame,
             text='{0}:'.format(
-                self.registry.translations.get('Search Term', 'Search Term')),
-            justify=tkinter.LEFT)
+                self.registry.translations.get('Search Term', 'Search Term')))
         search_term_label.grid(row=0, column=0, sticky=tkinter.W)
         self.search_term_entry = tkinter.Entry(
             action_frame,
-            width=60)
+            width=50)
         self.search_term_entry.grid(
             row=0,
             column=1,
@@ -351,6 +351,17 @@ class UserInterface():
             sticky=tkinter.W,
             padx=5,
             pady=5)
+        search_term_clear = tkinter.Button(
+            action_frame,
+            text=self.registry.translations.get(
+                'Clear Button',
+                'Clear'),
+            # width=10,
+            command=self.cut_search_term)
+        search_term_clear.grid(
+            row=0,
+            column=3,
+            sticky=tkinter.W)
         current_grid_row = 1
         for current_category in self.registry.search_urls:
             if current_grid_row <= 12:
@@ -439,7 +450,7 @@ class UserInterface():
         button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get('Open Button', 'Open'),
-            width=10,
+            # width=10,
             command=self.open_urls,
             default=tkinter.ACTIVE)
         button.grid(
@@ -451,7 +462,7 @@ class UserInterface():
         button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get('About Button', 'About…'),
-            width=10,
+            # width=10,
             command=self.show_about)
         button.grid(
             row=current_grid_row,
@@ -462,11 +473,11 @@ class UserInterface():
         button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get('Quit Button', 'Quit'),
-            width=10,
+            # width=10,
             command=self.quit)
         button.grid(
             row=current_grid_row,
-            column=2,
+            column=3,
             sticky=tkinter.E,
             padx=5,
             pady=5)
@@ -528,7 +539,7 @@ class UserInterface():
             text='{0}\n\n{1} {2}\n\n{3}\n\n'
             '{4}\n\n{5}\n{6}'.format(
                 self.registry.translations.get('Program',
-                                               'PROGRAM'),
+                                               'Program'),
                 SCRIPT_NAME,
                 VERSION,
                 license_text,
@@ -569,6 +580,18 @@ class UserInterface():
                 self.main_window.clipboard_clear()
                 self.main_window.clipboard_append(urls_list[0])
             #
+        #
+
+    def cut_search_term(self, event=None):
+        """Cut out the search term: copy it to the clipboard
+        and clear the entry
+        """
+        del event
+        search_term = self.search_term_entry.get().strip()
+        if search_term:
+            self.main_window.clipboard_clear()
+            self.main_window.clipboard_append(search_term)
+            self.search_term_entry.delete(0, tkinter.END)
         #
 
     def open_urls(self, event=None):
