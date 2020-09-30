@@ -3,7 +3,7 @@
   "Description": "Dieses Programm kann zur Schnellsuche \u00fcber verschiedene URLs in mehreren Kategorien verwendet werden.\nNach Eingabe des Suchbegriffs und Anklicken von \"\u00d6ffnen\" bzw. Dr\u00fccken von <Return> \u00f6ffnet sich das jeweilige Suchergebnis in einem neuen Fenster oder Tab des Standardbrowsers.\nDer Platzhalter \"url_count_per_category\" (in geschweiften Klammern) erzeugt eine Liste der Kategorien mit Anzahl der URLs wie folgt:\n{url_count_per_category}\n",
   "Metadata": {
     "Autor": "Rainer Schwarzbach",
-    "Datum": "2020-09-28",
+    "Datum": "2020-09-30",
     "Version": 1.1
   },
   "Search URLs": {
@@ -50,10 +50,9 @@
     "About Button": "\u00dcber\u2026",
     "Quit Button": "Beenden",
     "Copy URL": "URL kopieren",
-    "List URLs": "URLs auflisten",
-    "URLs in Category": "URLs in {0!r}",
-    "Program": "PROGRAMM",
-    "Config File": "KONFIGURATIONSDATEI",
+    "List URLs": "URL-Namen auflisten",
+    "Program": "Programm",
+    "Config File": "Konfigurationsdatei",
     "Special Key Selects": "Die Tastenkombination {0} w\u00e4hlt {1} aus.",
     "Category Error": "Fehler bei Kategorie {0!r}",
     "No Regex Match": "Der Suchbegriff {0!r} passt nicht zur Regular Expression {1!r} und wird ignoriert.\n",

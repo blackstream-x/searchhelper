@@ -15,7 +15,7 @@ Description: |
 # Metadata for this file
 Metadata:
     Author: Rainer Schwarzbach
-    Date: '2020-09-28'
+    Date: '2020-09-30'
     Version: 1.1
 #
 # URL definitions.
@@ -72,10 +72,9 @@ Translations:
     About Button: About…
     Quit Button: Quit
     Copy URL: Copy URL
-    List URLs: List URLs
-    URLs in Category: URLs in {0!r}
-    Program: PROGRAM
-    Config File: CONFIGURATION FILE
+    List URLs: List URL names
+    Program: Program
+    Config File: Configuration file
     #
     # Description addition for each effectual key combination from
     # "Special Select Keys"

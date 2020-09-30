@@ -3,7 +3,7 @@
   "Description": "This program can be used for a quick search over multiple URLs organized in different categories.\nAfter entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.\nThe placeholder 'url_count_per_category' (in curly braces) creates a list of categories and count of URLs per category as follows:\n{url_count_per_category}\n",
   "Metadata": {
     "Author": "Rainer Schwarzbach",
-    "Date": "2020-09-28",
+    "Date": "2020-09-30",
     "Version": 1.1
   },
   "Search URLs": {
@@ -50,10 +50,9 @@
     "About Button": "About\u2026",
     "Quit Button": "Quit",
     "Copy URL": "Copy URL",
-    "List URLs": "List URLs",
-    "URLs in Category": "URLs in {0!r}",
-    "Program": "PROGRAM",
-    "Config File": "CONFIGURATION FILE",
+    "List URLs": "List URL names",
+    "Program": "Program",
+    "Config File": "Configuration file",
     "Special Key Selects": "The key combination {0} selects {1}.",
     "Category Error": "Error for category {0!r}",
     "No Regex Match": "Search term {0!r} does not match the regular expression {1!r} and will be ignored.\n",

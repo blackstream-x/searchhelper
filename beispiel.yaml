@@ -15,7 +15,7 @@ Description: |
 # Metadaten dieser Datei
 Metadata:
     Autor: Rainer Schwarzbach
-    Datum: '2020-09-28'
+    Datum: '2020-09-30'
     Version: 1.1
 #
 # URL-Definitionen.
@@ -72,10 +72,9 @@ Translations:
     About Button: Über…
     Quit Button: Beenden
     Copy URL: URL kopieren
-    List URLs: URLs auflisten
-    URLs in Category: URLs in {0!r}
-    Program: PROGRAMM
-    Config File: KONFIGURATIONSDATEI
+    List URLs: URL-Namen auflisten
+    Program: Programm
+    Config File: Konfigurationsdatei
     #
     # Dieser Hinweis wird der Beschreibung für jede in der Option
     # "Special Select Keys" definierte wirkksame Tastenkombination angehängt.
