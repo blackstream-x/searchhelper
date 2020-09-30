@@ -211,10 +211,9 @@ class ModalDialog(tkinter.Toplevel):
 
     def __init__(self,
                  parent,
-                 text=None,
+                 content,
                  title=None,
-                 cancel_button=False,
-                 minimum_textwidth=None):
+                 cancel_button=True):
         """Create the toplevel window and wait until the dialog is closed"""
         super().__init__(parent)
         self.transient(parent)
@@ -222,31 +221,21 @@ class ModalDialog(tkinter.Toplevel):
             self.title(title)
         #
         self.parent = parent
-        self.result = None
-        body = tkinter.Frame(self)
-        text_area = tkinter.Label(
-            body,
-            text=text,
-            justify=tkinter.LEFT)
-        text_area.grid(sticky=tkinter.W)
-        self.initial_focus = text_area
-        if minimum_textwidth:
-            textwidth_enforcement_widget = tkinter.Label(
-                body,
-                width=minimum_textwidth)
-            textwidth_enforcement_widget.grid(sticky=tkinter.W)
-        #
-        body.grid(padx=5, pady=5, sticky=tkinter.E + tkinter.W)
+        self.initial_focus = self
+        self.body = tkinter.Frame(self)
+        self.create_content(content)
+        self.body.grid(padx=5, pady=5, sticky=tkinter.E + tkinter.W)
         self.create_buttonbox(cancel_button=cancel_button)
         self.grab_set()
-        if not self.initial_focus:
-            self.initial_focus = self
-        #
         self.protocol("WM_DELETE_WINDOW", self.action_cancel)
         self.initial_focus.focus_set()
         self.wait_window(self)
 
-    def create_buttonbox(self, cancel_button=False):
+    def create_content(self, content):
+        """Add content to body"""
+        raise NotImplementedError
+
+    def create_buttonbox(self, cancel_button=True):
         """Add standard button box."""
         box = tkinter.Frame(self)
         button = tkinter.Button(
@@ -265,7 +254,7 @@ class ModalDialog(tkinter.Toplevel):
             button.grid(padx=5, pady=5, row=0, column=1, sticky=tkinter.E)
         #
         self.bind("<Return>", self.action_ok)
-        box.grid(sticky=tkinter.E + tkinter.W)
+        box.grid(padx=5, pady=5, sticky=tkinter.E + tkinter.W)
 
     #
     # standard button semantics
@@ -282,6 +271,37 @@ class ModalDialog(tkinter.Toplevel):
         del event
         self.parent.focus_set()
         self.destroy()
+
+
+class InfoDialog(ModalDialog):
+
+    """Info dialog,
+    instantiated with a seriess of (heading, paragraph) tuples
+    after the parent window
+    """
+
+    def __init__(self,
+                 parent,
+                 *content,
+                 title=None):
+        """..."""
+        super().__init__(parent, content, title=title, cancel_button=False)
+
+    def create_content(self, content):
+        """Add content to body"""
+        for (heading, paragraph) in content:
+            heading_area = tkinter.Label(
+                self.body,
+                text=heading,
+                font=(None, 11, 'bold'),
+                justify=tkinter.LEFT)
+            heading_area.grid(sticky=tkinter.W, padx=5, pady=10)
+            text_area = tkinter.Label(
+                self.body,
+                text=paragraph,
+                justify=tkinter.LEFT)
+            text_area.grid(sticky=tkinter.W, padx=5, pady=5)
+        #
 
 
 class UserInterface():
@@ -533,33 +553,24 @@ class UserInterface():
         metadata = '\n'.join(
             '{0}: {1}'.format(key, value) for (key, value)
             in self.registry.application['metadata'].items())
-        ModalDialog(
+        InfoDialog(
             self.main_window,
-            title=self.registry.translations.get('About Button', 'About…'),
-            text='{0}\n\n{1} {2}\n\n{3}\n\n'
-            '{4}\n\n{5}\n{6}'.format(
-                self.registry.translations.get('Program',
-                                               'Program'),
-                SCRIPT_NAME,
-                VERSION,
-                license_text,
-                self.registry.translations.get('Config File',
-                                               'Config File'),
-                self.registry.application['config_file_name'],
-                metadata))
+            (self.registry.translations.get('Program', 'Program'),
+             '{0} {1}\n\n{2}'.format(SCRIPT_NAME, VERSION, license_text)),
+            (self.registry.translations.get('Config File', 'Config File'),
+             '{0}\n{1}'.format(self.registry.application['config_file_name'],
+                               metadata)),
+            title=self.registry.translations.get('About Button', 'About…'))
         #
 
     def show_urls_in(self, category):
         """Show all URL names of the selected category in a modal dialog"""
         url_names = [name for (name, url)
                      in self.registry.get_items(category)]
-        ModalDialog(
+        InfoDialog(
             self.main_window,
-            title=self.registry.translations.get(
-                'URLs in Category',
-                'URLs in {0!r}').format(category),
-            text='\n'.join(url_names),
-            minimum_textwidth=40)
+            (category, '\n'.join(url_names)),
+            title=self.registry.translations.get('List URLs', 'List URLs'))
         #
 
     def copy_url(self, category):
