@@ -4,14 +4,14 @@
   "Metadata": {
     "Author": "Rainer Schwarzbach",
     "Date": "2020-10-01",
-    "Version": "0.7.0"
+    "Version": "0.8.0"
   },
   "Search URLs": {
     "Bugs": {
       "URL": "https://bugs.debian.org/{search_term}"
     },
     "Developer information": {
-      "Preferred Browser": "safari",
+      "Preferred Browser": "my test browser",
       "URL": "https://tracker.debian.org/{search_term}"
     },
     "Packages": {
@@ -21,6 +21,9 @@
   },
   "Options": {
     "Mutually Exclusive Categories": false,
+    "Register Browsers": {
+      "my test browser": "/usr/bin/chromium"
+    },
     "Special Select Keys": {
       "Control-Shift-A": {
         "Label": "all categories",

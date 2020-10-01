@@ -27,7 +27,7 @@ from tkinter import messagebox
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.7.0'
+VERSION = '0.8.0'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
 
@@ -45,6 +45,7 @@ class UrlOpenerRegistry():
     k_must_match = 'Search Term Must Match'
     k_mutex_categories = 'Mutually Exclusive Categories'
     k_regex_description = 'Regex Description'
+    k_register_browsers = 'Register Browsers'
     k_search_urls = 'Search URLs'
     k_single_url = 'URL'
     k_special_keys = 'Special Select Keys'
@@ -88,6 +89,7 @@ class UrlOpenerRegistry():
             metadata=mapping.get('Metadata', {}),
             config_file_name=config_file_name)
         self.deviant_homepages = mapping.get('Deviant Homepages', {})
+        self.register_browsers()
 
     @classmethod
     def from_yaml_file(cls, config_file_name):
@@ -201,6 +203,29 @@ class UrlOpenerRegistry():
     def get_count(self, category):
         """Return the count of URLs per category"""
         return len(self.get_items(category))
+
+    def register_browsers(self):
+        """Register browsers defined in the config file
+        if the name ist not yet occupied
+        and if the path is really a file
+        """
+        try:
+            browser_items = self.options[self.k_register_browsers].items()
+        except (AttributeError, KeyError):
+            return
+        #
+        for (name, executable_path) in browser_items:
+            try:
+                webbrowser.get(name)
+            except webbrowser.Error:
+                if os.path.isfile(executable_path):
+                    webbrowser.register(
+                        name,
+                        None,
+                        webbrowser.BackgroundBrowser(executable_path))
+                #
+            #
+        #
 
 
 class ModalDialog(tkinter.Toplevel):

@@ -14,14 +14,14 @@ Description: |
 Metadata:
     Author: Rainer Schwarzbach
     Date: '2020-10-01'
-    Version: '0.7.0'
+    Version: '0.8.0'
 #
 # URL definitions.
 Search URLs:
     Bugs:
         URL: https://bugs.debian.org/{search_term}
     Developer information:
-        Preferred Browser: safari
+        Preferred Browser: my test browser
         URL: https://tracker.debian.org/{search_term}
     Packages:
         Preferred Browser: chromium
@@ -34,6 +34,10 @@ Options:
     #
     # Display radiobuttons instead of checkboxes?
     Mutually Exclusive Categories: false
+    #
+    # Register a non-standard browser for test purposes
+    Register Browsers:
+        my test browser: /usr/bin/chromium
     #
     # Definition of key combinations for selecting multiple categories at once.
     # Keys are identified as documented at
