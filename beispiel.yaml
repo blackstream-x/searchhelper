@@ -16,7 +16,7 @@ Description: |
 Metadata:
     Autor: Rainer Schwarzbach
     Datum: '2020-10-01'
-    Version: '0.7.0'
+    Version: '0.8.1'
 #
 # URL-Definitionen.
 Search URLs:
@@ -68,6 +68,7 @@ Translations:
     # Beschriftungen
     Search Term: Suchbegriff
     Clear Button: Löschen
+    Opened In: '{0} (öffnet in {1})'
     Open Button: Öffnen
     About Button: Über…
     Quit Button: Beenden

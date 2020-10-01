@@ -27,7 +27,7 @@ from tkinter import messagebox
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.8.0'
+VERSION = '0.8.1'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
 
@@ -408,14 +408,22 @@ class UserInterface():
             column=3,
             sticky=tkinter.W)
         current_grid_row = 1
-        for current_category in self.registry.search_urls:
+        for current_category, settings in self.registry.search_urls.items():
+            preferred_browser = settings.get('Preferred Browser')
+            if preferred_browser and preferred_browser in webbrowser._browsers:
+                category_label = self.registry.translations.get(
+                    'Opened In',
+                    '{0} (opened in {1})').format(
+                        current_category, preferred_browser)
+            else:
+                category_label = current_category
+            #
             if current_grid_row <= 12:
                 access_key = '<KeyPress-F{0}>'.format(current_grid_row)
-                category_label = '{0} (<F{1}>)'.format(current_category,
-                                                       current_grid_row)
+                category_label = '{0} <F{1}>'.format(category_label,
+                                                     current_grid_row)
             else:
                 access_key = None
-                category_label = current_category
             #
             if self.use_radiobuttons:
                 self.selectors[current_category] = tkinter.Radiobutton(

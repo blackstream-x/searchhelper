@@ -4,7 +4,7 @@
   "Metadata": {
     "Author": "Rainer Schwarzbach",
     "Date": "2020-10-01",
-    "Version": "0.7.0"
+    "Version": "0.8.1"
   },
   "Search URLs": {
     "Simple search page": {
@@ -46,6 +46,7 @@
   "Translations": {
     "Search Term": "Search Term",
     "Clear Button": "Clear",
+    "Opened In": "{0} (opened in {1})",
     "Open Button": "Open",
     "About Button": "About\u2026",
     "Quit Button": "Quit",
