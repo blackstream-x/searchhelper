@@ -3,17 +3,19 @@
   "Description": "This program can be used for a quick search on web pages of the Debian project.\nAfter entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.\n",
   "Metadata": {
     "Author": "Rainer Schwarzbach",
-    "Date": "2020-09-30",
-    "Version": 1.0
+    "Date": "2020-10-01",
+    "Version": "0.7.0"
   },
   "Search URLs": {
     "Bugs": {
       "URL": "https://bugs.debian.org/{search_term}"
     },
     "Developer information": {
+      "Preferred Browser": "safari",
       "URL": "https://tracker.debian.org/{search_term}"
     },
     "Packages": {
+      "Preferred Browser": "chromium",
       "URL": "https://packages.debian.org/{search_term}"
     }
   },

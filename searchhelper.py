@@ -27,7 +27,7 @@ from tkinter import messagebox
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '1.0'
+VERSION = '0.7.0'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
 
@@ -629,15 +629,24 @@ class UserInterface():
                     icon=messagebox.ERROR)
                 continue
             #
+            # Get a runnable browser instance – either the specified preferred
+            # browser (if installed) or the default.
             try:
-                webbrowser.open_new(urls_list[0])
+                current_browser = webbrowser.get(
+                    self.registry.search_urls[current_category].get(
+                        'Preferred Browser'))
+            except (webbrowser.Error, TypeError):
+                current_browser = webbrowser.get()
+            #
+            try:
+                current_browser.open_new(urls_list[0])
             except IndexError:
                 continue
             #
             if len(urls_list) > 1:
                 time.sleep(2)
                 for current_url in urls_list[1:]:
-                    webbrowser.open_new_tab(current_url)
+                    current_browser.open_new_tab(current_url)
                 #
             #
             time.sleep(2)

@@ -13,16 +13,18 @@ Description: |
 # Metadata for this file
 Metadata:
     Author: Rainer Schwarzbach
-    Date: '2020-09-30'
-    Version: 1.0
+    Date: '2020-10-01'
+    Version: '0.7.0'
 #
 # URL definitions.
 Search URLs:
     Bugs:
         URL: https://bugs.debian.org/{search_term}
     Developer information:
+        Preferred Browser: safari
         URL: https://tracker.debian.org/{search_term}
     Packages:
+        Preferred Browser: chromium
         URL: https://packages.debian.org/{search_term}
 #
 # No deviant homepages.

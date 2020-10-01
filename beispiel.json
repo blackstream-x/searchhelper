@@ -3,8 +3,8 @@
   "Description": "Dieses Programm kann zur Schnellsuche \u00fcber verschiedene URLs in mehreren Kategorien verwendet werden.\nNach Eingabe des Suchbegriffs und Anklicken von \"\u00d6ffnen\" bzw. Dr\u00fccken von <Return> \u00f6ffnet sich das jeweilige Suchergebnis in einem neuen Fenster oder Tab des Standardbrowsers.\nDer Platzhalter \"url_count_per_category\" (in geschweiften Klammern) erzeugt eine Liste der Kategorien mit Anzahl der URLs wie folgt:\n{url_count_per_category}\n",
   "Metadata": {
     "Autor": "Rainer Schwarzbach",
-    "Datum": "2020-09-30",
-    "Version": 1.1
+    "Datum": "2020-10-01",
+    "Version": "0.7.0"
   },
   "Search URLs": {
     "Einfache Suchseite": {
