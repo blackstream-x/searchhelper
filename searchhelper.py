@@ -27,7 +27,8 @@ from tkinter import messagebox
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.8.1'
+VERSION = '0.8.2'
+HOMEPAGE = 'https://github.com/blackstream-x/searchhelper'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
 
@@ -396,28 +397,32 @@ class UserInterface():
             sticky=tkinter.W,
             padx=5,
             pady=5)
-        search_term_clear = tkinter.Button(
+        button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get(
                 'Clear Button',
                 'Clear'),
             # width=10,
             command=self.cut_search_term)
-        search_term_clear.grid(
+        button.grid(
             row=0,
             column=3,
             sticky=tkinter.W)
         current_grid_row = 1
         for current_category, settings in self.registry.search_urls.items():
             preferred_browser = settings.get('Preferred Browser')
-            if preferred_browser and preferred_browser in webbrowser._browsers:
-                category_label = self.registry.translations.get(
-                    'Opened In',
-                    '{0} (opened in {1})').format(
-                        current_category, preferred_browser)
-            else:
-                category_label = current_category
-            #
+            category_label = current_category
+            if preferred_browser:
+                try:
+                    webbrowser.get(preferred_browser)
+                except webbrowser.Error:
+                    ...
+                else:
+                    category_label = self.registry.translations.get(
+                        'Opened In',
+                        '{0} (opened in {1})').format(
+                            current_category, preferred_browser.title())
+                #            #
             if current_grid_row <= 12:
                 access_key = '<KeyPress-F{0}>'.format(current_grid_row)
                 category_label = '{0} <F{1}>'.format(category_label,
@@ -456,14 +461,14 @@ class UserInterface():
                     """
                     return self.show_urls_in(category)
                 #
-                show_list_button = tkinter.Button(
+                button = tkinter.Button(
                     action_frame,
                     text=self.registry.translations.get(
                         'List URLs',
                         'List URLs'),
                     # width=10,
                     command=show_list_handler)
-                show_list_button.grid(
+                button.grid(
                     row=current_grid_row,
                     column=2,
                     sticky=tkinter.W)
@@ -475,14 +480,14 @@ class UserInterface():
                     """
                     return self.copy_url(category)
                 #
-                show_list_button = tkinter.Button(
+                button = tkinter.Button(
                     action_frame,
                     text=self.registry.translations.get(
                         'Copy URL',
                         'Copy URL'),
                     # width=10,
                     command=copy_url_handler)
-                show_list_button.grid(
+                button.grid(
                     row=current_grid_row,
                     column=2,
                     sticky=tkinter.W)
@@ -574,11 +579,9 @@ class UserInterface():
         in a modal dialog
         """
         try:
-            with open(
-                    os.path.join(os.path.dirname(sys.argv[0]),
-                                 LICENSE),
-                    mode='rt',
-                    encoding='utf-8') as license_file:
+            with open(os.path.join(os.path.dirname(sys.argv[0]), LICENSE),
+                      mode='rt',
+                      encoding='utf-8') as license_file:
                 license_text = license_file.read()
         except IOError:
             license_text = '(License file is missing)'
@@ -589,7 +592,8 @@ class UserInterface():
         InfoDialog(
             self.main_window,
             (self.registry.translations.get('Program', 'Program'),
-             '{0} {1}\n\n{2}'.format(SCRIPT_NAME, VERSION, license_text)),
+             '{0} {1} ({2})\n\n{3}'.format(
+                SCRIPT_NAME, VERSION, HOMEPAGE, license_text)),
             (self.registry.translations.get('Config File', 'Config File'),
              '{0}\n{1}'.format(self.registry.application['config_file_name'],
                                metadata)),
