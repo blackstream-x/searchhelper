@@ -15,8 +15,8 @@ Description: |
 # Metadata for this file
 Metadata:
     Author: Rainer Schwarzbach
-    Date: '2020-10-01'
-    Version: '0.8.1'
+    Date: '2020-10-09'
+    Version: '0.8.3'
 #
 # URL definitions.
 Search URLs:
@@ -51,7 +51,7 @@ Options:
     # Definition of key combinations for selecting multiple categories at once.
     # Keys are identified as documented at
     # <https://tkdocs.com/shipman/event-modifiers.html>,
-    # but without "KeyPress" which is inserted by the program.
+    # but without "KeyPress" (which is not necessary).
     # NOTE: This option is void if 'Mutually Exclusive Categories' is set to true.
     #       It would not make any sense when radiobuttons are displayed instead of checkboxes.
     Special Select Keys:
