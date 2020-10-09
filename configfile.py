@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-yamlconverter.py
+configfile.py
 
-Convert YAML files to JSON and vice versa
+handle YAML and JSON configuration files for searchhelper
 """
 
 
@@ -12,18 +12,28 @@ import argparse
 import json
 import os
 import sys
-import yaml
+
+try:
+    import yaml
+    YAML_SUPPORTED = True
+except ImportError:
+    YAML_SUPPORTED = False
+#
 
 #
 # Constants
 #
 
-SCRIPT_NAME = 'YAML converter'
-VERSION = '1.0'
+SCRIPT_NAME = 'configfile'
+VERSION = '0.8.4-alpha'
 LICENSE = 'LICENSE.txt'
 
 JSON_EXTENSION = '.json'
 YAML_EXTENSION = '.yaml'
+
+MODE_READ = 'rt'
+MODE_WRITE = 'wt'
+ENCODING = 'utf-8'
 
 
 #
@@ -31,8 +41,96 @@ YAML_EXTENSION = '.yaml'
 #
 
 
+def load_yaml(file_name):
+    """Load a YAML file"""
+    if YAML_SUPPORTED:
+        with open(file_name,
+                  mode=MODE_READ,
+                  encoding=ENCODING) as input_file:
+            return yaml.safe_load(input_file)
+        #
+    else:
+        raise NotImplementedError
+    #
+
+
+def dump_to_yaml(data, file_name):
+    """Dump data to a YAML file"""
+    if YAML_SUPPORTED:
+        with open(file_name,
+                  mode=MODE_WRITE,
+                  encoding=ENCODING) as output_file:
+            yaml.dump(data, output_file, default_flow_style=False)
+        #
+    else:
+        raise NotImplementedError
+    #
+
+
+def load_json(file_name):
+    """Load a JSON file"""
+    with open(file_name,
+              mode=MODE_READ,
+              encoding=ENCODING) as input_file:
+        return json.load(input_file)
+    #
+
+
+def dump_to_json(data, file_name):
+    """Dump data to a JSON file"""
+    with open(file_name,
+              mode=MODE_WRITE,
+              encoding=ENCODING) as output_file:
+        json.dump(data, output_file, indent=2)
+    #
+
+
+def load_file(file_name):
+    """Load a YAML or JSON file,
+    dispatch to the matching load function
+    """
+    file_stub, file_extension = os.path.splitext(file_name)
+    if file_extension in (YAML_EXTENSION, '.yml'):
+        return load_yaml(file_name)
+    #
+    if file_extension == JSON_EXTENSION:
+        return load_json(file_name)
+    #
+    raise ValueError(
+        'File extension {0!r} not supported'.format(file_extension))
+
+
+def dump_to_file(data, file_name):
+    """Dump data to a YAML or JSON file,
+    dispatch to the matching dump function
+    """
+    file_stub, file_extension = os.path.splitext(file_name)
+    if file_extension in (YAML_EXTENSION, '.yml'):
+        dump_to_yaml(data, file_name)
+    elif file_extension == JSON_EXTENSION:
+        dump_to_json(data, file_name)
+    else:
+        raise ValueError(
+            'File extension {0!r} not supported'.format(file_extension))
+    #
+
+
+def compare_data(first_file_name, second_file_name):
+    """Compare data in the files by dumping both to a JSON string
+    and comparing the strings
+    """
+    first_json_representation = json.dumps(
+        load_file(first_file_name),
+        indent=2)
+    second_json_representation = json.dumps(
+        load_file(second_file_name),
+        indent=2)
+    return first_json_representation == second_json_representation
+
+
 def __get_arguments():
     """Parse command line arguments"""
+    # TODO: This does not match anymore
     argument_parser = argparse.ArgumentParser(
         description='Convert YAML to JSON files and vice versa')
     argument_parser.add_argument('-f', '--force-overwrite',
@@ -45,36 +143,7 @@ def __get_arguments():
 
 def main(arguments):
     """Main script function"""
-    file_stub, file_extension = os.path.splitext(arguments.source_file)
-    if file_extension in (YAML_EXTENSION, '.yml'):
-        target_file_extension = JSON_EXTENSION
-        load = yaml.safe_load
-        dump = json.dump
-        dump_arguments = dict(indent=2)
-    elif file_extension == JSON_EXTENSION:
-        target_file_extension = YAML_EXTENSION
-        load = json.load
-        dump = yaml.dump
-        dump_arguments = dict(default_flow_style=False)
-    else:
-        raise ValueError(
-            'File extension {0!r} not supported'.format(file_extension))
-    #
-    target_file_name = file_stub + target_file_extension
-    if os.path.exists(target_file_name) and not arguments.force_overwrite:
-        raise ValueError(
-            'Target file {0!r} exists, use -f to overwrite'.format(
-                target_file_name))
-    #
-    with open(arguments.source_file,
-              mode='rt',
-              encoding='utf-8') as input_file:
-        data = load(input_file)
-    #
-    with open(target_file_name,
-              mode='wt',
-              encoding='utf-8') as output_file:
-        dump(data, output_file, **dump_arguments)
+    # TODO
     #
     return 0
 
