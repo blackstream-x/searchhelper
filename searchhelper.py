@@ -27,7 +27,7 @@ from tkinter import messagebox
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.8.2'
+VERSION = '0.8.3'
 HOMEPAGE = 'https://github.com/blackstream-x/searchhelper'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
@@ -70,8 +70,7 @@ class UrlOpenerRegistry():
             special_select = self.options.get(self.k_special_keys, {})
             for (key, value) in special_select.items():
                 if key[-2] == '-':
-                    access_key = '<{0}{1}KeyPress-{2}>'.format(
-                        *(key.rpartition('-')))
+                    access_key = '<{0}>'.format(key)
                     self.special_select[access_key] = [
                         category for category in value['Categories']
                         if category in self.search_urls]
@@ -366,9 +365,15 @@ class UserInterface():
             self.registry.k_mutex_categories,
             False)
         self.__build_action_frame()
-        self.main_window.bind_all("<Control-KeyPress-x>", self.cut_search_term)
-        self.main_window.bind_all("<KeyPress-Return>", self.open_urls)
-        self.main_window.bind_all("<KeyPress-Escape>", self.quit)
+        for (access_key, action) in (
+                ('<Control-d>', self.clear_search_term),
+                ('<Control-x>', self.cut_search_term),
+                ('<Return>', self.open_urls),
+                ('<Escape>', self.quit)):
+            if access_key not in self.registry.special_select:
+                self.main_window.bind_all(access_key, action)
+            #
+        #
         self.search_term_entry.focus_set()
         self.main_window.mainloop()
 
@@ -402,8 +407,7 @@ class UserInterface():
             text=self.registry.translations.get(
                 'Clear Button',
                 'Clear'),
-            # width=10,
-            command=self.cut_search_term)
+            command=self.clear_search_term)
         button.grid(
             row=0,
             column=3,
@@ -466,7 +470,6 @@ class UserInterface():
                     text=self.registry.translations.get(
                         'List URLs',
                         'List URLs'),
-                    # width=10,
                     command=show_list_handler)
                 button.grid(
                     row=current_grid_row,
@@ -485,7 +488,6 @@ class UserInterface():
                     text=self.registry.translations.get(
                         'Copy URL',
                         'Copy URL'),
-                    # width=10,
                     command=copy_url_handler)
                 button.grid(
                     row=current_grid_row,
@@ -508,7 +510,6 @@ class UserInterface():
         button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get('Open Button', 'Open'),
-            # width=10,
             command=self.open_urls,
             default=tkinter.ACTIVE)
         button.grid(
@@ -520,7 +521,6 @@ class UserInterface():
         button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get('About Button', 'About…'),
-            # width=10,
             command=self.show_about)
         button.grid(
             row=current_grid_row,
@@ -531,7 +531,6 @@ class UserInterface():
         button = tkinter.Button(
             action_frame,
             text=self.registry.translations.get('Quit Button', 'Quit'),
-            # width=10,
             command=self.quit)
         button.grid(
             row=current_grid_row,
@@ -630,6 +629,11 @@ class UserInterface():
             #
         #
 
+    def clear_search_term(self, event=None):
+        """clear the search term entry"""
+        del event
+        self.search_term_entry.delete(0, tkinter.END)
+
     def cut_search_term(self, event=None):
         """Cut out the search term: copy it to the clipboard
         and clear the entry
@@ -639,7 +643,7 @@ class UserInterface():
         if search_term:
             self.main_window.clipboard_clear()
             self.main_window.clipboard_append(search_term)
-            self.search_term_entry.delete(0, tkinter.END)
+            self.clear_search_term()
         #
 
     def open_urls(self, event=None):

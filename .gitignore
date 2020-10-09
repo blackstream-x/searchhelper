@@ -17,3 +17,6 @@ venv/
 # Spyder project info
 .spyproject
 build.txt
+
+# searchhelper specific
+presseschau.*
