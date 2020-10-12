@@ -9,7 +9,6 @@ idea based on <https://antitext.de/suche.py> by @teh_aSak
 """
 
 
-import json
 import os
 import re
 import sys
@@ -19,7 +18,10 @@ import urllib.parse
 import webbrowser
 
 import tkinter
+from tkinter import filedialog
 from tkinter import messagebox
+
+import configfile
 
 
 #
@@ -27,7 +29,7 @@ from tkinter import messagebox
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.8.3'
+VERSION = '0.9.0'
 HOMEPAGE = 'https://github.com/blackstream-x/searchhelper'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
@@ -38,9 +40,9 @@ DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
 #
 
 
-class UrlOpenerRegistry():
+class Configuration():
 
-    """Registry for this script"""
+    """Configuration data object for this script"""
 
     k_format = 'Number Format'
     k_must_match = 'Search Term Must Match'
@@ -92,32 +94,10 @@ class UrlOpenerRegistry():
         self.register_browsers()
 
     @classmethod
-    def from_yaml_file(cls, config_file_name):
-        """Read data from a YAML file"""
-        try:
-            # If PyYaml is not installed, we can catch the NotImplementedError
-            # and fall back to a JSON file.
-            import yaml
-        except ImportError as import_error:
-            raise NotImplementedError(
-                'No PyYAML modue installed') from import_error
-        #
-        with open(config_file_name,
-                  mode='rt',
-                  encoding='utf-8') as yaml_file:
-            return cls(yaml.safe_load(yaml_file.read()),
-                       config_file_name=config_file_name)
-        #
-
-    @classmethod
-    def from_json_file(cls, config_file_name):
-        """Read data from a YAML file"""
-        with open(config_file_name,
-                  mode='rt',
-                  encoding='utf-8') as json_file:
-            return cls(json.load(json_file),
-                       config_file_name=config_file_name)
-        #
+    def from_file(cls, config_file_name):
+        """Read data from a configuration file"""
+        return cls(configfile.read_file(config_file_name),
+                   config_file_name=config_file_name)
 
     def get_category_search_urls(self, category):
         """Return the search URLs dict for the specified category"""
@@ -333,14 +313,14 @@ class UserInterface():
 
     """GUI using tkinter"""
 
-    def __init__(self, registry):
-        """Initialize the url registry and build the GUI"""
-        self.registry = registry
+    def __init__(self, config_file_name):
+        """Initialize the url config and build the GUI"""
         self.main_window = tkinter.Tk()
-        self.main_window.title(self.registry.application['title'])
+        self.config = self.__config_from_file(config_file_name)
+        self.main_window.title(self.config.application['title'])
         description_text = '\n'.join(
             '\n'.join(textwrap.wrap(paragraph, width=80)) for paragraph
-            in self.registry.application['description'].splitlines())
+            in self.config.application['description'].splitlines())
         description_frame = tkinter.Frame(
             self.main_window,
             borderwidth=2,
@@ -361,8 +341,8 @@ class UserInterface():
         self.categories = {}
         self.selectors = {}
         self.selected_category = tkinter.StringVar()
-        self.use_radiobuttons = self.registry.options.get(
-            self.registry.k_mutex_categories,
+        self.use_radiobuttons = self.config.options.get(
+            self.config.k_mutex_categories,
             False)
         self.__build_action_frame()
         for (access_key, action) in (
@@ -370,12 +350,47 @@ class UserInterface():
                 ('<Control-x>', self.cut_search_term),
                 ('<Return>', self.open_urls),
                 ('<Escape>', self.quit)):
-            if access_key not in self.registry.special_select:
+            if access_key not in self.config.special_select:
                 self.main_window.bind_all(access_key, action)
             #
         #
         self.search_term_entry.focus_set()
         self.main_window.mainloop()
+
+    def __config_from_file(self, config_file_name):
+        """Return a Configuration() instance from the file."""
+        supported_file_types = []
+        for (file_type, extensions) in configfile.SUPPORTED_FILE_TYPES.items():
+            for file_extension in extensions:
+                supported_file_types.append((file_type, file_extension))
+            #
+        #
+        while True:
+            if config_file_name:
+                try:
+                    return Configuration.from_file(config_file_name)
+                except configfile.FiletypeNotSupported as error:
+                    messagebox.showerror(
+                        'Unsupported file type',
+                        str(error),
+                        icon=messagebox.ERROR)
+                except configfile.InvalidFormatError as error:
+                    messagebox.showerror(
+                        'Invalid file format',
+                        str(error),
+                        icon=messagebox.ERROR)
+                #
+            #
+            config_file_name = filedialog.askopenfilename(
+                title='Select configuration file',
+                parent=self.main_window,
+                filetypes=supported_file_types,
+                initialdir=os.path.dirname(sys.argv[0]))
+            if not config_file_name:
+                self.quit()
+                sys.exit(0)
+            #
+        #
 
     def __build_action_frame(self):
         """Build the action frame
@@ -390,7 +405,7 @@ class UserInterface():
         search_term_label = tkinter.Label(
             action_frame,
             text='{0}:'.format(
-                self.registry.translations.get('Search Term', 'Search Term')))
+                self.config.translations.get('Search Term', 'Search Term')))
         search_term_label.grid(row=0, column=0, sticky=tkinter.W)
         self.search_term_entry = tkinter.Entry(
             action_frame,
@@ -404,7 +419,7 @@ class UserInterface():
             pady=5)
         button = tkinter.Button(
             action_frame,
-            text=self.registry.translations.get(
+            text=self.config.translations.get(
                 'Clear Button',
                 'Clear'),
             command=self.clear_search_term)
@@ -413,7 +428,7 @@ class UserInterface():
             column=3,
             sticky=tkinter.W)
         current_grid_row = 1
-        for current_category, settings in self.registry.search_urls.items():
+        for current_category, settings in self.config.search_urls.items():
             preferred_browser = settings.get('Preferred Browser')
             category_label = current_category
             if preferred_browser:
@@ -422,7 +437,7 @@ class UserInterface():
                 except webbrowser.Error:
                     ...
                 else:
-                    category_label = self.registry.translations.get(
+                    category_label = self.config.translations.get(
                         'Opened In',
                         '{0} (opened in {1})').format(
                             current_category, preferred_browser.title())
@@ -457,7 +472,7 @@ class UserInterface():
                 column=0,
                 columnspan=2,
                 sticky=tkinter.W)
-            if self.registry.get_count(current_category) > 1:
+            if self.config.get_count(current_category) > 1:
                 def show_list_handler(self=self, category=current_category):
                     """Internal function definition to process the category
                     in the "real" handler function self.show_urls_in(),
@@ -467,7 +482,7 @@ class UserInterface():
                 #
                 button = tkinter.Button(
                     action_frame,
-                    text=self.registry.translations.get(
+                    text=self.config.translations.get(
                         'List URLs',
                         'List URLs'),
                     command=show_list_handler)
@@ -485,7 +500,7 @@ class UserInterface():
                 #
                 button = tkinter.Button(
                     action_frame,
-                    text=self.registry.translations.get(
+                    text=self.config.translations.get(
                         'Copy URL',
                         'Copy URL'),
                     command=copy_url_handler)
@@ -509,7 +524,7 @@ class UserInterface():
         #
         button = tkinter.Button(
             action_frame,
-            text=self.registry.translations.get('Open Button', 'Open'),
+            text=self.config.translations.get('Open Button', 'Open'),
             command=self.open_urls,
             default=tkinter.ACTIVE)
         button.grid(
@@ -520,7 +535,7 @@ class UserInterface():
             pady=5)
         button = tkinter.Button(
             action_frame,
-            text=self.registry.translations.get('About Button', 'About…'),
+            text=self.config.translations.get('About Button', 'About…'),
             command=self.show_about)
         button.grid(
             row=current_grid_row,
@@ -530,7 +545,7 @@ class UserInterface():
             pady=5)
         button = tkinter.Button(
             action_frame,
-            text=self.registry.translations.get('Quit Button', 'Quit'),
+            text=self.config.translations.get('Quit Button', 'Quit'),
             command=self.quit)
         button.grid(
             row=current_grid_row,
@@ -544,7 +559,7 @@ class UserInterface():
             pady=2,
             sticky=tkinter.E + tkinter.W)
         #
-        for special_select_key in self.registry.special_select:
+        for special_select_key in self.config.special_select:
             def special_handler(event, self=self, key=special_select_key):
                 """Internal function definition to process the key name
                 in the "real" handler function self.__select_categories(),
@@ -565,10 +580,10 @@ class UserInterface():
         #
 
     def __select_categories(self, special_select_key):
-        """Select all categories defined in the registry for the
+        """Select all categories defined in the config for the
         special select key
         """
-        for category in self.registry.special_select.get(
+        for category in self.config.special_select.get(
                 special_select_key, []):
             self.categories[category].set(1)
         #
@@ -587,37 +602,37 @@ class UserInterface():
         #
         metadata = '\n'.join(
             '{0}: {1}'.format(key, value) for (key, value)
-            in self.registry.application['metadata'].items())
+            in self.config.application['metadata'].items())
         InfoDialog(
             self.main_window,
-            (self.registry.translations.get('Program', 'Program'),
+            (self.config.translations.get('Program', 'Program'),
              '{0} {1} ({2})\n\n{3}'.format(
                 SCRIPT_NAME, VERSION, HOMEPAGE, license_text)),
-            (self.registry.translations.get('Config File', 'Config File'),
-             '{0}\n{1}'.format(self.registry.application['config_file_name'],
+            (self.config.translations.get('Config File', 'Config File'),
+             '{0}\n{1}'.format(self.config.application['config_file_name'],
                                metadata)),
-            title=self.registry.translations.get('About Button', 'About…'))
+            title=self.config.translations.get('About Button', 'About…'))
         #
 
     def show_urls_in(self, category):
         """Show all URL names of the selected category in a modal dialog"""
         url_names = [name for (name, url)
-                     in self.registry.get_items(category)]
+                     in self.config.get_items(category)]
         InfoDialog(
             self.main_window,
             (category, '\n'.join(url_names)),
-            title=self.registry.translations.get('List URLs', 'List URLs'))
+            title=self.config.translations.get('List URLs', 'List URLs'))
         #
 
     def copy_url(self, category):
         """Copy the URL from the current text into the clipboard"""
         search_term = self.search_term_entry.get().strip()
         try:
-            urls_list = self.registry.get_list_for(
+            urls_list = self.config.get_list_for(
                 category, search_term=search_term)
         except ValueError as value_error:
             messagebox.showerror(
-                self.registry.translations.get(
+                self.config.translations.get(
                     'Category Error',
                     'Error for category {0!r}').format(category),
                 str(value_error),
@@ -654,16 +669,16 @@ class UserInterface():
             selected_categories = [self.selected_category.get()]
         else:
             selected_categories = [category for category
-                                   in self.registry.search_urls
+                                   in self.config.search_urls
                                    if self.categories[category].get()]
         #
         for current_category in selected_categories:
             try:
-                urls_list = self.registry.get_list_for(
+                urls_list = self.config.get_list_for(
                     current_category, search_term=search_term)
             except ValueError as value_error:
                 messagebox.showerror(
-                    self.registry.translations.get(
+                    self.config.translations.get(
                         'Category Error',
                         'Error for category {0!r}').format(current_category),
                     str(value_error),
@@ -674,7 +689,7 @@ class UserInterface():
             # browser (if installed) or the default.
             try:
                 current_browser = webbrowser.get(
-                    self.registry.search_urls[current_category].get(
+                    self.config.search_urls[current_category].get(
                         'Preferred Browser'))
             except (webbrowser.Error, TypeError):
                 current_browser = webbrowser.get()
@@ -706,20 +721,12 @@ class UserInterface():
 
 def main():
     """Main script function"""
-    if len(sys.argv) > 1:
+    try:
         config_file_name = sys.argv[1]
-    else:
-        config_file_name = os.path.join(
-            os.path.dirname(sys.argv[0]),
-            DEFAULT_CONFIG_FILE_NAME)
+    except IndexError:
+        config_file_name = None
     #
-    file_type = os.path.splitext(config_file_name)[1]
-    if file_type in ('.yaml', '.yml'):
-        registry = UrlOpenerRegistry.from_yaml_file(config_file_name)
-    elif file_type == '.json':
-        registry = UrlOpenerRegistry.from_json_file(config_file_name)
-    #
-    UserInterface(registry)
+    UserInterface(config_file_name)
 
 
 if __name__ == '__main__':

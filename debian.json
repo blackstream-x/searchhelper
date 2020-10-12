@@ -3,8 +3,8 @@
   "Description": "This program can be used for a quick search on web pages of the Debian project.\nAfter entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.\n",
   "Metadata": {
     "Author": "Rainer Schwarzbach",
-    "Date": "2020-10-09",
-    "Version": "0.8.3"
+    "Date": "2020-10-12",
+    "Version": "0.9.0"
   },
   "Search URLs": {
     "Bugs": {
@@ -47,7 +47,7 @@
     "Program": "Program",
     "Config File": "Configuration file",
     "Special Key Selects": "The key combination {0} selects {1}.",
-    "Category Error": "Fehler bei Kategorie {0!r}",
+    "Category Error": "Error for category {0!r}",
     "No Regex Match": "Search term {0!r} does not match the regular expression {1!r} and will be ignored.\n",
     "Regex Error": "Error in regular expression\n({0})\nPlease fix the error in the file {1}\n({2}) and restart this program!\n"
   }
