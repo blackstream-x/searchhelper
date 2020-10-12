@@ -3,8 +3,8 @@
   "Description": "Dieses Programm kann zur Schnellsuche \u00fcber verschiedene URLs in mehreren Kategorien verwendet werden.\nNach Eingabe des Suchbegriffs und Anklicken von \"\u00d6ffnen\" bzw. Dr\u00fccken von <Return> \u00f6ffnet sich das jeweilige Suchergebnis in einem neuen Fenster oder Tab des Standardbrowsers.\nDer Platzhalter \"url_count_per_category\" (in geschweiften Klammern) erzeugt eine Liste der Kategorien mit Anzahl der URLs wie folgt:\n{url_count_per_category}\n",
   "Metadata": {
     "Autor": "Rainer Schwarzbach",
-    "Datum": "2020-10-09",
-    "Version": "0.8.3"
+    "Datum": "2020-10-12",
+    "Version": "0.9.0"
   },
   "Search URLs": {
     "Einfache Suchseite": {
@@ -15,11 +15,13 @@
       "URL": "http://example.com/search/eight-digit-number?query={search_term}"
     },
     "Einen Bezeichner aus Gro\u00dfbuchstaben und Ziffern erwartende Seite": {
+      "Preferred Browser": "firefox",
       "Search Term Must Match": "^[A-Z][A-Z0-9_]+$",
       "Regex Description": "Gro\u00dfbuchstaben, Ziffern und Unterstriche, beginnend mit einem Buchstaben",
       "URL": "http://example.com/search/identifier?query={search_term}"
     },
     "Kategorie mit mehreren URLs": {
+      "Preferred Browser": "chrome",
       "URLs": {
         "Beispiel 1": "http://example.com/seach/area-1?query={search_term}",
         "Beispiel 2": "http://example.com/seach/area-2?query={search_term}",
@@ -33,6 +35,10 @@
   },
   "Options": {
     "Mutually Exclusive Categories": false,
+    "Register Browsers": {
+      "chrome": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+      "firefox": "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+    },
     "Special Select Keys": {
       "Control-Shift-A": {
         "Label": "Einfache Suche und Bezeichnersuche",

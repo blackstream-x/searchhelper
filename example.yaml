@@ -15,8 +15,8 @@ Description: |
 # Metadata for this file
 Metadata:
     Author: Rainer Schwarzbach
-    Date: '2020-10-09'
-    Version: '0.8.3'
+    Date: '2020-10-12'
+    Version: '0.9.0'
 #
 # URL definitions.
 Search URLs:
@@ -26,10 +26,12 @@ Search URLs:
         Number Format: '>08d'
         URL: http://example.com/search/eight-digit-number?query={search_term}
     Single URL expecting an uppercase identifier:
+        Preferred Browser: firefox
         Search Term Must Match: '^[A-Z][A-Z0-9_]+$'
         Regex Description: Uppercase letters, digits and undersores, beginning with a letter
         URL: http://example.com/search/identifier?query={search_term}
     Category with multiple URLs:
+        Preferred Browser: chrome
         URLs:
             Example 1: http://example.com/seach/area-1?query={search_term}
             Example 2: http://example.com/seach/area-2?query={search_term}
@@ -47,6 +49,11 @@ Options:
     #
     # Display radiobuttons instead of checkboxes?
     Mutually Exclusive Categories: false
+    #
+    # Register additional Browsers (if installed at that path)
+    Register Browsers:
+        chrome: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
+        firefox: C:\Program Files\Mozilla Firefox\firefox.exe
     #
     # Definition of key combinations for selecting multiple categories at once.
     # Keys are identified as documented at

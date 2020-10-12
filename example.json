@@ -3,8 +3,8 @@
   "Description": "This program can be used for a quick search over multiple URLs organized in different categories.\nAfter entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.\nThe placeholder 'url_count_per_category' (in curly braces) creates a list of categories and count of URLs per category as follows:\n{url_count_per_category}\n",
   "Metadata": {
     "Author": "Rainer Schwarzbach",
-    "Date": "2020-10-09",
-    "Version": "0.8.3"
+    "Date": "2020-10-12",
+    "Version": "0.9.0"
   },
   "Search URLs": {
     "Simple search page": {
@@ -15,11 +15,13 @@
       "URL": "http://example.com/search/eight-digit-number?query={search_term}"
     },
     "Single URL expecting an uppercase identifier": {
+      "Preferred Browser": "firefox",
       "Search Term Must Match": "^[A-Z][A-Z0-9_]+$",
       "Regex Description": "Uppercase letters, digits and undersores, beginning with a letter",
       "URL": "http://example.com/search/identifier?query={search_term}"
     },
     "Category with multiple URLs": {
+      "Preferred Browser": "chrome",
       "URLs": {
         "Example 1": "http://example.com/seach/area-1?query={search_term}",
         "Example 2": "http://example.com/seach/area-2?query={search_term}",
@@ -33,6 +35,10 @@
   },
   "Options": {
     "Mutually Exclusive Categories": false,
+    "Register Browsers": {
+      "chrome": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+      "firefox": "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+    },
     "Special Select Keys": {
       "Control-Shift-A": {
         "Label": "Simple and identifier search",

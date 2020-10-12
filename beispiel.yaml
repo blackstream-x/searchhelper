@@ -15,8 +15,8 @@ Description: |
 # Metadaten dieser Datei
 Metadata:
     Autor: Rainer Schwarzbach
-    Datum: '2020-10-09'
-    Version: '0.8.3'
+    Datum: '2020-10-12'
+    Version: '0.9.0'
 #
 # URL-Definitionen.
 Search URLs:
@@ -26,10 +26,12 @@ Search URLs:
         Number Format: '>08d'
         URL: http://example.com/search/eight-digit-number?query={search_term}
     Einen Bezeichner aus Großbuchstaben und Ziffern erwartende Seite:
+        Preferred Browser: firefox
         Search Term Must Match: '^[A-Z][A-Z0-9_]+$'
         Regex Description: Großbuchstaben, Ziffern und Unterstriche, beginnend mit einem Buchstaben
         URL: http://example.com/search/identifier?query={search_term}
     Kategorie mit mehreren URLs:
+        Preferred Browser: chrome
         URLs:
             Beispiel 1: http://example.com/seach/area-1?query={search_term}
             Beispiel 2: http://example.com/seach/area-2?query={search_term}
@@ -47,6 +49,11 @@ Options:
     #
     # Wenn "true", werden Radiobuttons statt Checkboxen angezeigt
     Mutually Exclusive Categories: false
+    #
+    # Zusätzliche Browser registrieren (falls am angegebenen Pfad installiert)
+    Register Browsers:
+        chrome: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
+        firefox: C:\Program Files\Mozilla Firefox\firefox.exe
     #
     # Tastenkombinationen zur Auswahl mehrerer Kategorien auf einmal.
     # Die Tasten werden wie in
