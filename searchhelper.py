@@ -29,7 +29,7 @@ import configfile
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.9.0'
+VERSION = '0.9.1'
 HOMEPAGE = 'https://github.com/blackstream-x/searchhelper'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'
@@ -405,7 +405,7 @@ class UserInterface():
         search_term_label = tkinter.Label(
             action_frame,
             text='{0}:'.format(
-                self.config.translations.get('Search Term', 'Search Term')))
+                self.translated('Search Term')))
         search_term_label.grid(row=0, column=0, sticky=tkinter.W)
         self.search_term_entry = tkinter.Entry(
             action_frame,
@@ -419,9 +419,9 @@ class UserInterface():
             pady=5)
         button = tkinter.Button(
             action_frame,
-            text=self.config.translations.get(
+            text=self.translated(
                 'Clear Button',
-                'Clear'),
+                default='Clear'),
             command=self.clear_search_term)
         button.grid(
             row=0,
@@ -437,9 +437,9 @@ class UserInterface():
                 except webbrowser.Error:
                     ...
                 else:
-                    category_label = self.config.translations.get(
+                    category_label = self.translated(
                         'Opened In',
-                        '{0} (opened in {1})').format(
+                        default='{0} (opened in {1})').format(
                             current_category, preferred_browser.title())
                 #            #
             if current_grid_row <= 12:
@@ -482,9 +482,7 @@ class UserInterface():
                 #
                 button = tkinter.Button(
                     action_frame,
-                    text=self.config.translations.get(
-                        'List URLs',
-                        'List URLs'),
+                    text=self.translated('List URLs'),
                     command=show_list_handler)
                 button.grid(
                     row=current_grid_row,
@@ -500,9 +498,7 @@ class UserInterface():
                 #
                 button = tkinter.Button(
                     action_frame,
-                    text=self.config.translations.get(
-                        'Copy URL',
-                        'Copy URL'),
+                    text=self.translated('Copy URL'),
                     command=copy_url_handler)
                 button.grid(
                     row=current_grid_row,
@@ -524,7 +520,7 @@ class UserInterface():
         #
         button = tkinter.Button(
             action_frame,
-            text=self.config.translations.get('Open Button', 'Open'),
+            text=self.translated('Open Button', default='Open'),
             command=self.open_urls,
             default=tkinter.ACTIVE)
         button.grid(
@@ -535,7 +531,7 @@ class UserInterface():
             pady=5)
         button = tkinter.Button(
             action_frame,
-            text=self.config.translations.get('About Button', 'About…'),
+            text=self.translated('About Button', default='About…'),
             command=self.show_about)
         button.grid(
             row=current_grid_row,
@@ -545,7 +541,7 @@ class UserInterface():
             pady=5)
         button = tkinter.Button(
             action_frame,
-            text=self.config.translations.get('Quit Button', 'Quit'),
+            text=self.translated('Quit Button', default='Quit'),
             command=self.quit)
         button.grid(
             row=current_grid_row,
@@ -588,6 +584,20 @@ class UserInterface():
             self.categories[category].set(1)
         #
 
+    def translated(self, term, default=None):
+        """Return the conigured translation for term,
+        or default if it is not found, or term itself
+        if no defaut was set
+        """
+        try:
+            return self.config.translations[term]
+        except KeyError:
+            if default is None:
+                return term
+            #
+            return default
+        #
+
     def show_about(self):
         """Show information about the application and the source file
         in a modal dialog
@@ -605,13 +615,13 @@ class UserInterface():
             in self.config.application['metadata'].items())
         InfoDialog(
             self.main_window,
-            (self.config.translations.get('Program', 'Program'),
+            (self.translated('Program'),
              '{0} {1} ({2})\n\n{3}'.format(
                 SCRIPT_NAME, VERSION, HOMEPAGE, license_text)),
-            (self.config.translations.get('Config File', 'Config File'),
+            (self.translated('Config File'),
              '{0}\n{1}'.format(self.config.application['config_file_name'],
                                metadata)),
-            title=self.config.translations.get('About Button', 'About…'))
+            title=self.translated('About Button', default='About…'))
         #
 
     def show_urls_in(self, category):
@@ -621,7 +631,7 @@ class UserInterface():
         InfoDialog(
             self.main_window,
             (category, '\n'.join(url_names)),
-            title=self.config.translations.get('List URLs', 'List URLs'))
+            title=self.translated('List URLs'))
         #
 
     def copy_url(self, category):
@@ -632,9 +642,9 @@ class UserInterface():
                 category, search_term=search_term)
         except ValueError as value_error:
             messagebox.showerror(
-                self.config.translations.get(
+                self.translated(
                     'Category Error',
-                    'Error for category {0!r}').format(category),
+                    default='Error for category {0!r}').format(category),
                 str(value_error),
                 icon=messagebox.ERROR)
         else:
@@ -678,9 +688,10 @@ class UserInterface():
                     current_category, search_term=search_term)
             except ValueError as value_error:
                 messagebox.showerror(
-                    self.config.translations.get(
+                    self.translated(
                         'Category Error',
-                        'Error for category {0!r}').format(current_category),
+                        default='Error for category {0!r}').format(
+                            current_category),
                     str(value_error),
                     icon=messagebox.ERROR)
                 continue
