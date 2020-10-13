@@ -27,7 +27,7 @@ except ImportError:
 #
 
 SCRIPT_NAME = 'configfile'
-VERSION = '0.9.0'
+VERSION = '1.0.0-alpha'
 LICENSE = 'LICENSE.txt'
 
 MODE_READ = 'rt'
@@ -46,9 +46,7 @@ RC_ERROR = 2
 
 class FiletypeNotSupported(Exception):
 
-    """Raised if a YAML load or dump function was called
-    although YAML is not supported in the runtime environment
-    """
+    """Raised if an unsupported fie type was encountered"""
 
     ...
 
@@ -99,34 +97,24 @@ if YAML_SUPPORTED:
 
     def load_yaml(file_name):
         """Load a YAML file"""
-        if YAML_SUPPORTED:
-            try:
-                with open(file_name,
-                          mode=MODE_READ,
-                          encoding=ENCODING) as input_file:
-                    return yaml.safe_load(input_file)
-                #
-            except yaml.parser.ParserError as yaml_parser_error:
-                raise InvalidFormatError(
-                    'YAML parsing failed:\n{0}'.format(
-                        yaml_parser_error.problem)) from yaml_parser_error
+        try:
+            with open(file_name,
+                      mode=MODE_READ,
+                      encoding=ENCODING) as input_file:
+                return yaml.safe_load(input_file)
             #
-        else:
-            raise FiletypeNotSupported(
-                'PyYAML is required for YAML parsing.')
+        except yaml.parser.ParserError as yaml_parser_error:
+            raise InvalidFormatError(
+                'YAML parsing failed:\n{0}'.format(
+                    yaml_parser_error.problem)) from yaml_parser_error
         #
 
     def dump_to_yaml(data, file_name):
         """Dump data to a YAML file"""
-        if YAML_SUPPORTED:
-            with open(file_name,
-                      mode=MODE_WRITE,
-                      encoding=ENCODING) as output_file:
-                yaml.dump(data, output_file, default_flow_style=False)
-            #
-        else:
-            raise FiletypeNotSupported(
-                'PyYAML is required for writing YAML files.')
+        with open(file_name,
+                  mode=MODE_WRITE,
+                  encoding=ENCODING) as output_file:
+            yaml.dump(data, output_file, default_flow_style=False)
         #
 
     SUPPORTED_FILE_TYPES[YAML_FILE] = ('.yaml', '.yml')
@@ -268,6 +256,8 @@ def __get_arguments():
         help='Verbose output')
     subparsers = argument_parser.add_subparsers(
         dest='action',
+        title='Available subcommands (use {0} <subcommand> --help'
+        ' for subcommand details)'.format(sys.argv[0]),
         required=True)
     # Compare files
     parser_compare = subparsers.add_parser(

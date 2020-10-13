@@ -16,12 +16,12 @@ See [example.yaml](./example.yaml) as a reference.
   * **Date**
   * **Version**
 * **Search URLs**  
-  _This is the_ only **required** _top-level key. Each subkey of this represents a URL category._  
-  Each category must have one of the following subkeys:
+  _This is the only **required top-level key**. Each subkey of this represents a URL category._  
+  Each category **must have** one of the following subkeys:
   * **URL**  
     _directly specifying the single URL in this category_
   * **URLs**  
-    _followed by a key-value list of URL names/identifiers and URLs in this category.
+    _followed by a key-value list of URL names/identifiers and URLs in this category._
 
   Additionally, the following subkeys are allowed in a category:
   * **Number Format**  
@@ -42,7 +42,7 @@ See [example.yaml](./example.yaml) as a reference.
     with the error message._
   * **Preferred Browser**  
     _If specified and a registered web browser with that key exists, open the URL(s) from this category
-    in that browser instead of the standard browser_
+    in that browser instead of the standard browser._
 * **Deviant Homepages**  
   _If the search term is empty, the home pages of the URLs instead of the search pages are opened.
   Normally, the home page is derived from each URL by simply omitting the path part, which ought to be
@@ -61,15 +61,15 @@ See [example.yaml](./example.yaml) as a reference.
     and if the specified executable path exists._
   * **Special Select Keys**  
     _Here, you can add key combinations as documented at <https://tkdocs.com/shipman/event-modifiers.html>
-    that will be used to select multiple categories at once._
-    Every key comination needs the following two subkeys:
+    that will be used to select multiple categories at once._  
+    Every key combination **must have** the following two subkeys:
     * **Label**  
     _A summary for the group of categories that is selected by the key combination_
     * **Categories**  
     _The list of category names to be selected.
     Each name not matching a defined category name (i.e. a **Search URLs** subkey) will be ignored._
-* **Translations**
+* **Translations**  
   _Translations for the GUI (key-value-pairs).
-  For any omitted translation, a default value will be used._
+  For any omitted translation, a default value will be used._  
   See the example files for translation examples.
 
