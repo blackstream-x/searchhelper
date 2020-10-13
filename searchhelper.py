@@ -29,7 +29,7 @@ import configfile
 #
 
 SCRIPT_NAME = 'Search Helper'
-VERSION = '0.9.1'
+VERSION = '1.0.0'
 HOMEPAGE = 'https://github.com/blackstream-x/searchhelper'
 LICENSE = 'LICENSE.txt'
 DEFAULT_CONFIG_FILE_NAME = 'example.yaml'

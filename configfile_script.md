@@ -15,7 +15,8 @@ depending on the result of importing the yaml module.
 
 configfile.**YAML\_SUPPORTED**
 
-> YAML support flag. Contains ```True``` if the runtime environments supports YAML, ```False``` otherwise.
+> YAML support flag.
+> ```True``` if the runtime environment supports YAML, ```False``` otherwise.
 
 configfile.**SUPPORTED\_FILE\_TYPE**
 
@@ -75,8 +76,9 @@ configfile.**write\_to\_file**(_data, file\_name_)
 
 configfile.**comparable\_form**(_data_)
 
-> Returns a string containing a comparable. serialized form of data
-> with sorted dict keys. If YAML is supported, that is YAML, else JSON.
+> Returns a string containing a comparable, serialized form of _data_
+> with sorted keys for all contained dicts.
+> That serialized form is YAML if supported, else JSON.
 
 ## Command line interface
 
@@ -97,7 +99,7 @@ If the ```--diff``` option was provided, the script produces a
 [unified diff](https://docs.python.org/3/library/difflib.html#difflib.unified_diff)
 output of data from both files.  
 Depending on the YAML capabilities of the runtime environment,
-data is represented in YAML or JSON.
+data is represented as YAML or JSON.
 
 ### Translate (convert) files
 
@@ -111,5 +113,5 @@ Translates data from input\_file\_name to output\_file\_name. The file formats
 are determined from the file extensions.
 
 Exits with returncode 2 if the output file already exists
-and no ```--overwrite``` option was provided.
-If the output file was written successfully, script exits with returncode 0.
+and no ```--overwrite``` option was provided.  
+If the output file was written successfully, the script exits with returncode 0.

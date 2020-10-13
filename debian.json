@@ -3,8 +3,8 @@
   "Description": "This program can be used for a quick search on web pages of the Debian project.\nAfter entering the search term and clicking on the 'Open' button or hitting the <Return> key, search results will open in new browser windows or tabs.\n",
   "Metadata": {
     "Author": "Rainer Schwarzbach",
-    "Date": "2020-10-12",
-    "Version": "0.9.0"
+    "Date": "2020-10-13",
+    "Version": "1.0.0"
   },
   "Search URLs": {
     "Bugs": {
